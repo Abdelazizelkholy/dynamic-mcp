@@ -30,10 +30,6 @@ class User extends Authenticatable implements HasMedia
         'password',
     ];
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('avatar')->singleFile();
-    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -57,4 +53,18 @@ class User extends Authenticatable implements HasMedia
             'password' => 'hashed',
         ];
     }
+
+
+    // Optional: define a media collection for profile picture
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('profile_picture')->singleFile();
+    }
+
+    // Optional: accessor for profile picture URL
+    public function getProfilePictureUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl('profile_picture') ?: null;
+    }
+
 }

@@ -4,19 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\LoginRequest;
-use App\Http\Requests\Admin\ResetPasswordRequest;
-use App\Http\Requests\Admin\SendOtpRequest;
+use App\Http\Requests\Admin\Auth\LoginRequest;
+use App\Http\Requests\Admin\Auth\ResetPasswordRequest;
+use App\Http\Requests\Admin\Auth\SendOtpRequest;
 use App\Mail\SendOtpMail;
 use App\Models\PasswordResetOtp;
 use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
