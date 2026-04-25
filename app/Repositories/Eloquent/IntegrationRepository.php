@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Eloquent;
 
 use App\Models\Integration;
+use App\Repositories\IntegrationRepositoryInterface;
 
 class IntegrationRepository implements IntegrationRepositoryInterface
 {

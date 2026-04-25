@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
-use App\Repositories\IntegrationRepository;
+use App\Repositories\Eloquent\IntegrationAuthStepRepository;
+use App\Repositories\Eloquent\IntegrationRepository;
+use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\IntegrationAuthStepRepositoryInterface;
 use App\Repositories\IntegrationRepositoryInterface;
-use App\Repositories\UserRepository;
 use App\Repositories\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,8 +18,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
-        $this->app->bind(IntegrationRepositoryInterface::class, IntegrationRepository::class
-        );
+        $this->app->bind(IntegrationRepositoryInterface::class, IntegrationRepository::class);
+        $this->app->bind(IntegrationAuthStepRepositoryInterface::class, IntegrationAuthStepRepository::class);
+
     }
 
     /**
