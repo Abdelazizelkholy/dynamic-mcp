@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Route;
 | Auth (public)
 |--------------------------------------------------------------------------
 */
+
+Route::get('test' , function(){
+   echo "test";
+});
+
 Route::prefix('auth')->controller(AuthController::class)->group(function () {
     Route::post('login',          'login');
     Route::post('send-otp',       'sendOtp');
