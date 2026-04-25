@@ -22,6 +22,7 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
+        dd(1);
         $user = $this->userRepo->create($request->validated());
         return ApiResponse::success(new UserResource($user), 'User created successfully');
     }
