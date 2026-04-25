@@ -50,9 +50,13 @@ class AuthController extends Controller
             ]
         );
 
-        Mail::to($request->email)->send(new SendOtpMail($otp));
+      //  Mail::to($request->email)->send(new SendOtpMail($otp));
 
-        return ApiResponse::success(null, 'OTP sent to your email');
+      //  return ApiResponse::success(null, 'OTP sent to your email');
+
+        return ApiResponse::success([
+            'otp' => $otp,
+        ], 'OTP sent to your email');
     }
 
 
