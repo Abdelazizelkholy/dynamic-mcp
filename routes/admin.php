@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\Integration\IntegrationHeaderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\Integration\IntegrationController;
 use App\Http\Controllers\Admin\Integration\IntegrationAuthStepController;
@@ -61,6 +62,21 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::delete('{id}',       'destroy')->middleware('permission:integration_auth_delete');
                 Route::patch('{id}/toggle', 'toggle')->middleware('permission:integration_auth_update');
             });
+
+
+        Route::prefix('{integrationId}/headers')
+            ->controller(IntegrationHeaderController::class)
+            ->group(function () {
+                Route::get('/',             'index')  ->middleware('permission:integration_read');
+                Route::post('/',            'store')  ->middleware('permission:integration_create');
+                Route::get('{id}',          'show')   ->middleware('permission:integration_read');
+                Route::put('{id}',          'update') ->middleware('permission:integration_update');
+                Route::delete('{id}',       'destroy')->middleware('permission:integration_delete');
+                Route::patch('{id}/toggle', 'toggle') ->middleware('permission:integration_update');
+            });
+
+
+
     });
 
 });
