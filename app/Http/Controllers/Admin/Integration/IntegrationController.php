@@ -25,7 +25,7 @@ class IntegrationController extends Controller
 
     public function show($id)
     {
-        $integration = $this->repo->find($id);
+        $integration = $this->repo->find($id, ['authSteps', 'headers']);
         if (!$integration) return response()->json(['message'=>'Not found'],404);
 
         return new IntegrationResource($integration);

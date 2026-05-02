@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\EnumController;
 use App\Http\Controllers\Admin\Integration\IntegrationHeaderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\Integration\IntegrationController;
@@ -22,6 +23,7 @@ Route::prefix('auth')->controller(AuthController::class)->group(function () {
     Route::post('send-otp',       'sendOtp');
     Route::post('reset-password', 'resetPassword');
 });
+Route::get('enums', [EnumController::class, 'index']);
 
 /*
 |--------------------------------------------------------------------------

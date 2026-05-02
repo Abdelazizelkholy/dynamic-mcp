@@ -30,4 +30,17 @@ class Integration extends Model implements HasMedia
     {
         return $this->getFirstMediaUrl('integration_media') ?: null;
     }
+
+
+
+    public function authSteps()
+    {
+        return $this->hasMany(IntegrationAuthStep::class)->orderBy('order');
+    }
+
+    public function headers()
+    {
+        return $this->hasMany(IntegrationHeader::class)->orderBy('order');
+    }
+
 }

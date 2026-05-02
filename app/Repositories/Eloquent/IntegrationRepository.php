@@ -12,10 +12,11 @@ class IntegrationRepository implements IntegrationRepositoryInterface
         return Integration::all();
     }
 
-    public function find(int $id): ?Integration
+    public function find(int $id , array $relations = [] ): ?Integration
     {
-        return Integration::find($id);
+        return Integration::with($relations)->find($id);
     }
+
 
     public function create(array $data): Integration
     {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Integration;
 
+use App\Http\Resources\Admin\AuthStep\IntegrationAuthStepResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,6 +26,13 @@ class IntegrationResource extends JsonResource
             'media_url' => $this->media_url,
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
+
+            'auth_steps' => IntegrationAuthStepResource::collection(
+                $this->whenLoaded('authSteps')
+            ),
+            'headers'    => IntegrationHeaderResource::collection(
+                $this->whenLoaded('headers')
+            ),
         ];
     }
 }
