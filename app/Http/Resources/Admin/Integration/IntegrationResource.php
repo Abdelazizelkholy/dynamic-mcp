@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin\Integration;
 
 use App\Http\Resources\Admin\AuthStep\IntegrationAuthStepResource;
+use App\Http\Resources\Admin\Header\IntegrationHeaderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

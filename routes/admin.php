@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('test' , function(){
-   echo "test";
-});
 
 Route::prefix('auth')->controller(AuthController::class)->group(function () {
     Route::post('login',          'login');
