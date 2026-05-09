@@ -27,8 +27,8 @@ class IntegrationResource extends JsonResource
             'media_url' => $this->media_url,
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
-            'category' => 'Marketing',
-            'enable' => $this->enable,
+            'category'          => $this->category,
+            'category_label'    => $this->category_label,
             'auth_steps' => IntegrationAuthStepResource::collection(
                 $this->whenLoaded('authSteps')
             ),

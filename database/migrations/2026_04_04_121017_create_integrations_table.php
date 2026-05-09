@@ -19,6 +19,16 @@ return new class extends Migration
             $table->text('description_en')->nullable();
             $table->text('description_ar')->nullable();
             $table->boolean('publish')->default(false);
+            $table->enum('category', [
+                'ecommerce',
+                'payment',
+                'shipping',
+                'crm',
+                'marketing',
+                'accounting',
+                'social',
+                'other',
+            ])->default('other');
             $table->timestamps();
         });
     }

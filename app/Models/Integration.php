@@ -18,7 +18,7 @@ class Integration extends Model implements HasMedia
         'description_en',
         'description_ar',
         'publish',
-        'enable'
+        'category',
     ];
 
     // Media collection
@@ -42,6 +42,20 @@ class Integration extends Model implements HasMedia
     public function headers()
     {
         return $this->hasMany(IntegrationHeader::class)->orderBy('order');
+    }
+
+    public function getCategoryLabelAttribute(): string
+    {
+        return match ($this->category) {
+            'ecommerce'  => 'E-Commerce',
+            'payment'    => 'Payment',
+            'shipping'   => 'Shipping',
+            'crm'        => 'CRM',
+            'marketing'  => 'Marketing',
+            'accounting' => 'Accounting',
+            'social'     => 'Social',
+            default      => 'Other',
+        };
     }
 
 }

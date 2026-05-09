@@ -30,6 +30,7 @@ class UpdateIntegrationRequest extends FormRequest
             'description_ar' => 'nullable|string',
             'publish' => 'nullable|boolean',
             'integration_media' => 'nullable|file|mimes:png,jpg,jpeg|max:2048',
+            'category'          => ['sometimes', 'in:ecommerce,payment,shipping,crm,marketing,accounting,social,other'],
         ];
     }
 }

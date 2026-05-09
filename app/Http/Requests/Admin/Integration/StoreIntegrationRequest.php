@@ -30,6 +30,7 @@ class StoreIntegrationRequest extends FormRequest
             'description_ar' => 'required|string',
             'publish' => 'nullable|boolean',
             'integration_media' => 'nullable|file|mimes:png,jpg,jpeg|max:2048',
+            'category'          => ['required', 'in:ecommerce,payment,shipping,crm,marketing,accounting,social,other'],
         ];
     }
 }

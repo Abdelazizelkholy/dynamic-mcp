@@ -16,6 +16,18 @@ class EnumController extends Controller
     {
         return ApiResponse::success([
 
+
+            'integration_categories' => [
+                ['key' => 'ecommerce',  'label' => 'E-Commerce'],
+                ['key' => 'payment',    'label' => 'Payment'],
+                ['key' => 'shipping',   'label' => 'Shipping'],
+                ['key' => 'crm',        'label' => 'CRM'],
+                ['key' => 'marketing',  'label' => 'Marketing'],
+                ['key' => 'accounting', 'label' => 'Accounting'],
+                ['key' => 'social',     'label' => 'Social'],
+                ['key' => 'other',      'label' => 'Other'],
+            ],
+
             // ── Auth Steps ──────────────────────────────────────────────────
             'auth_step_types' => [
                 ['key' => 'login_callback',  'label' => 'Login & Callback'],
