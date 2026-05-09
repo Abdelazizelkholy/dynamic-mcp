@@ -54,4 +54,19 @@ class IntegrationRepository implements IntegrationRepositoryInterface
 
         return $integration->delete();
     }
+
+    public function changeStatus(int $id): ?Integration
+    {
+        $integration = $this->find($id);
+
+        if (!$integration) {
+            return null;
+        }
+
+        // Toggle the boolean value
+        $integration->publish = !$integration->publish;
+        $integration->save();
+
+        return $integration;
+    }
 }

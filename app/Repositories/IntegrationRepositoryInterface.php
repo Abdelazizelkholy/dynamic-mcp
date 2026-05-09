@@ -11,4 +11,6 @@ interface IntegrationRepositoryInterface
     public function create(array $data): Integration;
     public function update(int $id, array $data): ?Integration;
     public function delete(int $id): bool;
+
+    public function changeStatus(int $id): ?Integration;
 }

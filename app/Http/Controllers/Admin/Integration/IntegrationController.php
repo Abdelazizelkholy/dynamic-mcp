@@ -52,4 +52,24 @@ class IntegrationController extends Controller
 
         return response()->json(['message'=>'Deleted successfully']);
     }
+
+    public function changeStatus(Request $request, $id)
+    {
+        $integration = $this->repo->changeStatus($id);
+
+        if (!$integration) {
+            return response()->json([
+                'message' => 'Integration not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Status updated successfully',
+            'data' => [
+                'id' => $integration->id,
+                'publish' => $integration->publish
+            ]
+        ]);
+    }
+
 }
