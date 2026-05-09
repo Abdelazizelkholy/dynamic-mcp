@@ -18,6 +18,7 @@ class Integration extends Model implements HasMedia
         'description_en',
         'description_ar',
         'publish',
+        'enable'
     ];
 
     // Media collection
