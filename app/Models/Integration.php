@@ -21,6 +21,25 @@ class Integration extends Model implements HasMedia
         'category',
     ];
 
+    protected $casts = [
+        'publish' => 'boolean',
+        'enable'  => 'boolean',
+    ];
+
+    public function getCategoryLabelAttribute(): string
+    {
+        return match ($this->category) {
+            'ecommerce'  => 'E-Commerce',
+            'payment'    => 'Payment',
+            'shipping'   => 'Shipping',
+            'crm'        => 'CRM',
+            'marketing'  => 'Marketing',
+            'accounting' => 'Accounting',
+            'social'     => 'Social',
+            default      => 'Other',
+        };
+    }
+
     // Media collection
     public function registerMediaCollections(): void
     {
@@ -44,18 +63,11 @@ class Integration extends Model implements HasMedia
         return $this->hasMany(IntegrationHeader::class)->orderBy('order');
     }
 
-    public function getCategoryLabelAttribute(): string
+
+    public function services()
     {
-        return match ($this->category) {
-            'ecommerce'  => 'E-Commerce',
-            'payment'    => 'Payment',
-            'shipping'   => 'Shipping',
-            'crm'        => 'CRM',
-            'marketing'  => 'Marketing',
-            'accounting' => 'Accounting',
-            'social'     => 'Social',
-            default      => 'Other',
-        };
+        return $this->hasMany(IntegrationService::class)->orderBy('order');
     }
+
 
 }

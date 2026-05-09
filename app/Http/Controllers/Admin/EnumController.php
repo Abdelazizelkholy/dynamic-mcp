@@ -8,15 +8,11 @@ use Illuminate\Http\JsonResponse;
 
 class EnumController extends Controller
 {
-    /**
-     * GET /admin/enums
-     * Returns all enums used in the integration module.
-     */
     public function index(): JsonResponse
     {
         return ApiResponse::success([
 
-
+            // ── Integration ─────────────────────────────────────────────────
             'integration_categories' => [
                 ['key' => 'ecommerce',  'label' => 'E-Commerce'],
                 ['key' => 'payment',    'label' => 'Payment'],
@@ -36,11 +32,11 @@ class EnumController extends Controller
             ],
 
             'auth_types' => [
-                ['key' => 'oauth2',   'label' => 'OAuth 2.0'],
-                ['key' => 'api_key',  'label' => 'API Key'],
-                ['key' => 'basic',    'label' => 'Basic Auth'],
-                ['key' => 'bearer',   'label' => 'Bearer Token'],
-                ['key' => 'custom',   'label' => 'Custom'],
+                ['key' => 'oauth2',  'label' => 'OAuth 2.0'],
+                ['key' => 'api_key', 'label' => 'API Key'],
+                ['key' => 'basic',   'label' => 'Basic Auth'],
+                ['key' => 'bearer',  'label' => 'Bearer Token'],
+                ['key' => 'custom',  'label' => 'Custom'],
             ],
 
             'http_methods' => [
@@ -70,6 +66,14 @@ class EnumController extends Controller
             'header_require_from' => [
                 ['key' => 'admin',            'label' => 'Admin'],
                 ['key' => 'user_integration', 'label' => 'User Integration'],
+            ],
+
+            // ── Services ────────────────────────────────────────────────────
+            'service_content_types' => [
+                ['key' => 'application/json',                  'label' => 'JSON'],
+                ['key' => 'multipart/form-data',               'label' => 'Form Data'],
+                ['key' => 'application/x-www-form-urlencoded', 'label' => 'URL Encoded'],
+                ['key' => 'text/plain',                        'label' => 'Plain Text'],
             ],
 
         ], 'Enums retrieved successfully.');

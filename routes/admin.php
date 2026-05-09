@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\EnumController;
 use App\Http\Controllers\Admin\Integration\IntegrationHeaderController;
+use App\Http\Controllers\Admin\Integration\IntegrationServiceController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\Integration\IntegrationController;
 use App\Http\Controllers\Admin\Integration\IntegrationAuthStepController;
@@ -75,6 +76,18 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::put('{id}',          'update') ->middleware('permission:integration_update');
                 Route::delete('{id}',       'destroy')->middleware('permission:integration_delete');
                 Route::patch('{id}/toggle', 'toggle') ->middleware('permission:integration_update');
+            });
+
+        Route::prefix('{integrationId}/services')
+            ->controller(IntegrationServiceController::class)
+            ->group(function () {
+                Route::get('/',                        'index')                ->middleware('permission:integration_read');
+                Route::post('/',                       'store')               ->middleware('permission:integration_create');
+                Route::get('available-dependencies',   'availableDependencies')->middleware('permission:integration_read');
+                Route::get('{id}',                     'show')                ->middleware('permission:integration_read');
+                Route::put('{id}',                     'update')              ->middleware('permission:integration_update');
+                Route::delete('{id}',                  'destroy')             ->middleware('permission:integration_delete');
+                Route::patch('{id}/toggle',            'toggle')              ->middleware('permission:integration_update');
             });
 
 
