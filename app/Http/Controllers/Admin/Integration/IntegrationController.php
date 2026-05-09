@@ -7,14 +7,20 @@ use App\Http\Requests\Admin\Integration\StoreIntegrationRequest;
 use App\Http\Requests\Admin\Integration\UpdateIntegrationRequest;
 use App\Http\Resources\Admin\Integration\IntegrationResource;
 use App\Repositories\IntegrationRepositoryInterface;
+use Illuminate\Http\Request;
 
 class IntegrationController extends Controller
 {
     public function __construct(private IntegrationRepositoryInterface $repo) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        return IntegrationResource::collection($this->repo->all());
+        $integrations = $this->repo->all(
+            search : $request->search,
+            perPage: $request->per_page ?? 15,
+        );
+
+        return IntegrationResource::collection($integrations);
     }
 
     public function store(StoreIntegrationRequest $request)
