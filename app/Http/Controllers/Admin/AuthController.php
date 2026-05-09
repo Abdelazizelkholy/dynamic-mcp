@@ -10,9 +10,11 @@ use App\Http\Requests\Admin\Auth\SendOtpRequest;
 use App\Mail\SendOtpMail;
 use App\Models\PasswordResetOtp;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Request;
 
 class AuthController extends Controller
 {
@@ -87,6 +89,14 @@ class AuthController extends Controller
         $record->delete();
 
         return ApiResponse::success(null, 'Password reset successful');
+    }
+
+    public function logout(Request $request): JsonResponse
+    {
+        // Revoke the current token used in this request
+        $request->user()->currentAccessToken()->delete();
+
+        return ApiResponse::success(null, 'Logged out successfully.');
     }
 
 }

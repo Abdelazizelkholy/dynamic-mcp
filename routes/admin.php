@@ -19,6 +19,9 @@ Route::prefix('auth')->controller(AuthController::class)->group(function () {
     Route::post('login',          'login');
     Route::post('send-otp',       'sendOtp');
     Route::post('reset-password', 'resetPassword');
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('logout', 'logout');
+    });
 });
 Route::get('enums', [EnumController::class, 'index']);
 
