@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('{id}',    'show')->middleware('permission:integration_read');
             Route::put('{id}',    'update')->middleware('permission:integration_update');
             Route::delete('{id}', 'destroy')->middleware('permission:integration_delete');
-            Route::delete('{id}/change-status', 'changeStatus')->middleware('permission:integration_update');
+            Route::put('{id}/change-status', 'changeStatus')->middleware('permission:integration_update');
         });
 
         // ── Auth Steps ──────────────────────────────────────────────────────
