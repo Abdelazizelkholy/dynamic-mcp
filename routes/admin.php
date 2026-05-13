@@ -83,24 +83,25 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('{integrationId}/services')
             ->controller(IntegrationServiceController::class)
             ->group(function () {
-                Route::get('/',                        'index')                ->middleware('permission:integration_read');
-                Route::post('/',                       'store')               ->middleware('permission:integration_create');
-                Route::get('available-dependencies',   'availableDependencies')->middleware('permission:integration_read');
-                Route::get('{id}',                     'show')                ->middleware('permission:integration_read');
-                Route::put('{id}',                     'update')              ->middleware('permission:integration_update');
-                Route::delete('{id}',                  'destroy')             ->middleware('permission:integration_delete');
-                Route::patch('{id}/toggle',            'toggle')              ->middleware('permission:integration_update');
-            });
+                Route::get('/',                      'index');
+                Route::post('/',                     'store');
+                Route::get('available-dependencies', 'availableDependencies');
+                Route::get('{serviceId}',            'show');
+                Route::put('{serviceId}',            'update');
+                Route::delete('{serviceId}',         'destroy');
+                Route::patch('{serviceId}/toggle',   'toggle');
 
-        Route::prefix('{serviceId}/params')
-            ->controller(IntegrationServiceParamController::class)
-            ->group(function () {
-                Route::get('/',             'index');
-                Route::post('/',            'store');
-                Route::post('reorder',      'reorder');   // before {id} to avoid conflict
-                Route::get('{id}',          'show');
-                Route::put('{id}',          'update');
-                Route::delete('{id}',       'destroy');
+                // ── Params — nested inside services ──────────────────────────────
+                Route::prefix('{serviceId}/params')
+                    ->controller(IntegrationServiceParamController::class)
+                    ->group(function () {
+                        Route::get('/',        'index');
+                        Route::post('/',       'store');
+                        Route::post('reorder', 'reorder');
+                        Route::get('{id}',     'show');
+                        Route::put('{id}',     'update');
+                        Route::delete('{id}',  'destroy');
+                    });
             });
 
 
