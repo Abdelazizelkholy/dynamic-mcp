@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\EnumController;
 use App\Http\Controllers\Admin\Integration\IntegrationHeaderController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceController;
+use App\Http\Controllers\Admin\Integration\IntegrationServiceParamController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\Integration\IntegrationController;
 use App\Http\Controllers\Admin\Integration\IntegrationAuthStepController;
@@ -89,6 +90,17 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::put('{id}',                     'update')              ->middleware('permission:integration_update');
                 Route::delete('{id}',                  'destroy')             ->middleware('permission:integration_delete');
                 Route::patch('{id}/toggle',            'toggle')              ->middleware('permission:integration_update');
+            });
+
+        Route::prefix('{serviceId}/params')
+            ->controller(IntegrationServiceParamController::class)
+            ->group(function () {
+                Route::get('/',             'index');
+                Route::post('/',            'store');
+                Route::post('reorder',      'reorder');   // before {id} to avoid conflict
+                Route::get('{id}',          'show');
+                Route::put('{id}',          'update');
+                Route::delete('{id}',       'destroy');
             });
 
 
