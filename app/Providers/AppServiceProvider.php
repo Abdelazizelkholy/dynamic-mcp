@@ -5,12 +5,18 @@ namespace App\Providers;
 use App\Repositories\Eloquent\IntegrationAuthStepRepository;
 use App\Repositories\Eloquent\IntegrationHeaderRepository;
 use App\Repositories\Eloquent\IntegrationRepository;
+use App\Repositories\Eloquent\IntegrationServiceHeaderRepository;
+use App\Repositories\Eloquent\IntegrationServiceInputGroupRepository;
+use App\Repositories\Eloquent\IntegrationServiceInputRepository;
 use App\Repositories\Eloquent\IntegrationServiceParamRepository;
 use App\Repositories\Eloquent\IntegrationServiceRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\IntegrationAuthStepRepositoryInterface;
 use App\Repositories\IntegrationHeaderRepositoryInterface;
 use App\Repositories\IntegrationRepositoryInterface;
+use App\Repositories\IntegrationServiceHeaderRepositoryInterface;
+use App\Repositories\IntegrationServiceInputGroupRepositoryInterface;
+use App\Repositories\IntegrationServiceInputRepositoryInterface;
 use App\Repositories\IntegrationServiceParamRepositoryInterface;
 use App\Repositories\IntegrationServiceRepositoryInterface;
 use App\Repositories\UserRepositoryInterface;
@@ -29,6 +35,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IntegrationHeaderRepositoryInterface::class, IntegrationHeaderRepository::class);
         $this->app->bind(IntegrationServiceRepositoryInterface::class, IntegrationServiceRepository::class);
         $this->app->bind(IntegrationServiceParamRepositoryInterface::class, IntegrationServiceParamRepository::class);
+        $this->app->bind(IntegrationServiceHeaderRepositoryInterface::class, IntegrationServiceHeaderRepository::class);
+        $this->app->bind(IntegrationServiceInputGroupRepositoryInterface::class, IntegrationServiceInputGroupRepository::class);
+        $this->app->bind(IntegrationServiceInputRepositoryInterface::class,     IntegrationServiceInputRepository::class);
 
     }
 

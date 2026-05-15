@@ -4,6 +4,9 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\EnumController;
 use App\Http\Controllers\Admin\Integration\IntegrationHeaderController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceController;
+use App\Http\Controllers\Admin\Integration\IntegrationServiceHeaderController;
+use App\Http\Controllers\Admin\Integration\IntegrationServiceInputController;
+use App\Http\Controllers\Admin\Integration\IntegrationServiceInputGroupController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceParamController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\Integration\IntegrationController;
@@ -102,6 +105,43 @@ Route::middleware('auth:sanctum')->group(function () {
                         Route::put('{id}',     'update');
                         Route::delete('{id}',  'destroy');
                     });
+
+                Route::prefix('{serviceId}/headers')
+                    ->controller(IntegrationServiceHeaderController::class)
+                    ->group(function () {
+                        Route::get('/',             'index');
+                        Route::post('/',            'store');
+                        Route::get('{id}',          'show');
+                        Route::put('{id}',          'update');
+                        Route::delete('{id}',       'destroy');
+                        Route::patch('{id}/toggle', 'toggle');
+                    });
+
+                Route::prefix('{serviceId}/input-groups')
+                    ->controller(IntegrationServiceInputGroupController::class)
+                    ->group(function () {
+                        Route::get('/',    'index');
+                        Route::post('/',   'store');
+                        Route::get('{id}', 'show');
+                        Route::put('{id}', 'update');
+                        Route::delete('{id}', 'destroy');
+
+                        // Inputs inside a group
+                        Route::post('{id}/inputs', [IntegrationServiceInputController::class, 'storeInGroup']);
+                    });
+
+                // Standalone Inputs (not inside a group)
+                Route::prefix('{serviceId}/inputs')
+                    ->controller(IntegrationServiceInputController::class)
+                    ->group(function () {
+                        Route::get('/',       'index');
+                        Route::post('/',      'store');
+                        Route::get('{id}',    'show');
+                        Route::put('{id}',    'update');
+                        Route::delete('{id}', 'destroy');
+                    });
+
+
             });
 
 

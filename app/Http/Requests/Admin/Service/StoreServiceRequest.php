@@ -22,6 +22,7 @@ class StoreServiceRequest extends FormRequest
             'is_enabled'             => ['sometimes', 'boolean'],
             'inherit_global_headers' => ['sometimes', 'boolean'],
             'long_term_execution'    => ['sometimes', 'boolean'],
+            'response_example'       => ['sometimes', 'array'],
 
             // multi-select: array of service IDs within the same integration
             'dependency_service_ids'   => ['nullable', 'array'],

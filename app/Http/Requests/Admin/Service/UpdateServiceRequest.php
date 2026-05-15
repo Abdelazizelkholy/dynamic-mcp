@@ -22,6 +22,7 @@ class UpdateServiceRequest extends FormRequest
             'is_enabled'             => ['sometimes', 'boolean'],
             'inherit_global_headers' => ['sometimes', 'boolean'],
             'long_term_execution'    => ['sometimes', 'boolean'],
+            'response_example'       => ['sometimes', 'array'],
 
             'dependency_service_ids'   => ['nullable', 'array'],
             'dependency_service_ids.*' => ['integer', 'exists:integration_services,id'],

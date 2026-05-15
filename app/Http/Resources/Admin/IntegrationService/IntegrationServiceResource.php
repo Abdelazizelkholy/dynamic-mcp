@@ -27,6 +27,7 @@ class IntegrationServiceResource extends JsonResource
             'is_enabled' => $this->is_enabled,
             'inherit_global_headers' => $this->inherit_global_headers,
             'long_term_execution' => $this->long_term_execution,
+            'response_example' => $this->response_example,
 
             // Dependency services — array of {id, service_name, http_method}
             'dependency_service_ids' => $this->dependency_service_ids ?? [],

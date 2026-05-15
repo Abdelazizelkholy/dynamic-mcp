@@ -24,6 +24,7 @@ class IntegrationService extends Model implements HasMedia
         'is_enabled',
         'inherit_global_headers',
         'long_term_execution',
+        'response_example',
         'dependency_service_ids',
         'order',
     ];
@@ -34,6 +35,7 @@ class IntegrationService extends Model implements HasMedia
         'long_term_execution'    => 'boolean',
         'dependency_service_ids' => 'array',
         'order'                  => 'integer',
+        'response_example'       => 'array',
     ];
 
     // ── Media ──────────────────────────────────────────────────────────────────
