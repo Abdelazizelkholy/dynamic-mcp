@@ -22,7 +22,7 @@ class UpdateAuthStepRequest extends FormRequest
             'inputs'                       => ['nullable', 'array'],
             'inputs.*.key'                 => ['required_with:inputs', 'string'],
             'inputs.*.label'               => ['required_with:inputs', 'string'],
-            'inputs.*.type'                => ['required_with:inputs', 'in:text,password,email,url,select,hidden'],
+            'inputs.*.type'                => ['required_with:inputs', 'in:body,params,headers'],
             'inputs.*.required'            => ['required_with:inputs', 'boolean'],
             'inputs.*.placeholder'         => ['nullable', 'string'],
             'inputs.*.require_from'        => [

@@ -48,12 +48,9 @@ class EnumController extends Controller
             ],
 
             'input_types' => [
-                ['key' => 'text',     'label' => 'Text'],
-                ['key' => 'password', 'label' => 'Password'],
-                ['key' => 'email',    'label' => 'Email'],
-                ['key' => 'url',      'label' => 'URL'],
-                ['key' => 'select',   'label' => 'Select'],
-                ['key' => 'hidden',   'label' => 'Hidden (system filled)'],
+                ['key' => 'body',    'label' => 'Body'],
+                ['key' => 'params',  'label' => 'Params'],
+                ['key' => 'headers', 'label' => 'Headers'],
             ],
 
 
