@@ -56,6 +56,17 @@ class EnumController extends Controller
                 ['key' => 'hidden',   'label' => 'Hidden (system filled)'],
             ],
 
+
+            'auth_step_input_require_from' => [
+                ['key' => 'admin',                  'label' => 'Admin'],
+                ['key' => 'user',                   'label' => 'User'],
+                ['key' => 'front',                  'label' => 'Front'],
+                ['key' => 'response',               'label' => 'Response'],
+                ['key' => 'user_integration',       'label' => 'User Integration'],
+                ['key' => 'previous_step_response', 'label' => 'Previous Step Response'],
+            ],
+
+
             // ── Headers ─────────────────────────────────────────────────────
             'header_types' => [
                 ['key' => 'normal',     'label' => 'Normal'],
