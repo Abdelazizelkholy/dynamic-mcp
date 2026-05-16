@@ -24,8 +24,6 @@ class StoreAuthStepRequest extends FormRequest
             'inputs.*.key'                 => ['required_with:inputs', 'string'],
             'inputs.*.label'               => ['required_with:inputs', 'string'],
             'inputs.*.type'                => ['required_with:inputs', 'in:body,params,headers'],
-            'inputs.*.required'            => ['required_with:inputs', 'boolean'],
-            'inputs.*.placeholder'         => ['nullable', 'string'],
 
             /*
             |------------------------------------------------------------------
