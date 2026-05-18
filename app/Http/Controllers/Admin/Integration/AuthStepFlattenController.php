@@ -49,7 +49,10 @@ class AuthStepFlattenController extends Controller
 
         $flattened = $this->flatten($step->response_example);
 
-        return ApiResponse::success($flattened, 'Response keys retrieved successfully.');
+        return ApiResponse::success(
+            (object) collect($flattened)->keyBy('key')->map(fn($item) => $item['example'])->toArray(),
+            'Response keys retrieved successfully.'
+        );
     }
 
     /**
