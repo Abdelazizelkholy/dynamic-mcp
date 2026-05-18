@@ -69,6 +69,8 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::put('{id}',          'update')->middleware('permission:integration_auth_update');
                 Route::delete('{id}',       'destroy')->middleware('permission:integration_auth_delete');
                 Route::patch('{id}/toggle', 'toggle')->middleware('permission:integration_auth_update');
+
+                Route::get('{id}/flatten-response', AuthStepFlattenController::class);
             });
 
 
