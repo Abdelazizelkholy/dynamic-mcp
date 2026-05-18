@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\EnumController;
+use App\Http\Controllers\Admin\Integration\AuthStepFlattenController;
 use App\Http\Controllers\Admin\Integration\IntegrationHeaderController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceHeaderController;
