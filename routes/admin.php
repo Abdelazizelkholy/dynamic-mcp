@@ -61,19 +61,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // ── Auth Steps ──────────────────────────────────────────────────────
         Route::prefix('{integrationId}/auth-steps')
-            ->controller(IntegrationAuthStepController::class)
             ->group(function () {
 
                 Route::get('flatten-response', AuthStepFlattenController::class);
 
-                Route::get('/',             'index')->middleware('permission:integration_auth_read');
-                Route::post('/',            'store')->middleware('permission:integration_auth_create');
-                Route::post('reorder',      'reorder')->middleware('permission:integration_auth_update');
-                Route::get('{id}',          'show')->middleware('permission:integration_auth_read');
-                Route::put('{id}',          'update')->middleware('permission:integration_auth_update');
-                Route::delete('{id}',       'destroy')->middleware('permission:integration_auth_delete');
-                Route::patch('{id}/toggle', 'toggle')->middleware('permission:integration_auth_update');
-
+                Route::controller(IntegrationAuthStepController::class)->group(function () {
+                    Route::get('/',             'index');
+                    Route::post('/',            'store');
+                    Route::post('reorder',      'reorder');
+                    Route::get('{id}',          'show');     // ← this was catching "flatten-response"
+                    Route::put('{id}',          'update');
+                    Route::delete('{id}',       'destroy');
+                    Route::patch('{id}/toggle', 'toggle');
+                });
 
             });
 
