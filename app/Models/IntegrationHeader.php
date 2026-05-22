@@ -13,6 +13,7 @@ class IntegrationHeader extends Model
         'integration_id',
         'type',
         'header_key',
+        'concatenate_key',
         'require_from',
         'value',
         'label',

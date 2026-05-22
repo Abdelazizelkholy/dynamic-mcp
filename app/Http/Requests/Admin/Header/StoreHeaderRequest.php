@@ -14,21 +14,16 @@ class StoreHeaderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type'         => ['required', 'in:normal,bearer,basic_auth'],
-            'header_key'   => ['required', 'string', 'max:255'],    // e.g. Authorization
-            'require_from' => ['required', 'in:admin,user_integration'],
-            'value'        => ['nullable', 'string'],               // static value OR output key name
-            'label'        => ['nullable', 'string', 'max:255'],
-            'description'  => ['nullable', 'string'],
-            'is_active'    => ['sometimes', 'boolean'],
+            'headers'                       => ['required', 'array', 'min:1'],
+            'headers.*.type'                => ['required', 'in:normal,bearer,basic_auth'],
+            'headers.*.header_key'          => ['required', 'string', 'max:255'],
+            'headers.*.concatenate_key'     => ['nullable', 'string', 'max:255'],  // only for type=normal
+            'headers.*.require_from'        => ['required', 'in:admin,user,user_integration'],
+            'headers.*.value'               => ['nullable', 'string'],
+            'headers.*.label'               => ['nullable', 'string', 'max:255'],
+            'headers.*.description'         => ['nullable', 'string'],
+            'headers.*.is_active'           => ['sometimes', 'boolean'],
         ];
     }
 
-    public function messages(): array
-    {
-        return [
-            'type.in'         => 'type must be one of: normal, bearer, basic_auth.',
-            'require_from.in' => 'require_from must be one of: admin, user_integration.',
-        ];
-    }
 }

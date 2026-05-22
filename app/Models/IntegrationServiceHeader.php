@@ -13,6 +13,7 @@ class IntegrationServiceHeader extends Model
         'integration_service_id',
         'type',
         'header_key',
+        'concatenate_key',
         'require_from',
         'value',
         'label',

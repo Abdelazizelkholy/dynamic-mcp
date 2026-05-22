@@ -42,32 +42,40 @@ class IntegrationHeaderController extends Controller
     // POST /admin/integrations/{integrationId}/headers
     public function store(StoreHeaderRequest $request, int $integrationId): JsonResponse
     {
-        $header = $this->repo->create(array_merge(
-            $request->validated(),
-            ['integration_id' => $integrationId]
-        ));
+        $created = [];
+
+        foreach ($request->validated('headers') as $headerData) {
+            $created[] = $this->repo->create(array_merge(
+                $headerData,
+                ['integration_id' => $integrationId]
+            ));
+        }
 
         return ApiResponse::success(
-            new IntegrationHeaderResource($header),
-            'Header created successfully.',
+            IntegrationHeaderResource::collection(collect($created)),
+            'Headers created successfully.',
             201
         );
     }
 
     // PUT /admin/integrations/{integrationId}/headers/{id}
-    public function update(UpdateHeaderRequest $request, int $integrationId, int $id): JsonResponse
+    public function update(UpdateHeaderRequest $request, int $integrationId): JsonResponse
     {
-        $header = $this->repo->find($id);
 
-        if (! $header || $header->integration_id !== $integrationId) {
-            return ApiResponse::error('Header not found.', 404);
+        \App\Models\IntegrationHeader::where('integration_id', $integrationId)->delete();
+
+        $updated = [];
+
+        foreach ($request->validated('headers') as $headerData) {
+            $updated[] = $this->repo->create(array_merge(
+                $headerData,
+                ['integration_id' => $integrationId]
+            ));
         }
 
-        $updated = $this->repo->update($id, $request->validated());
-
         return ApiResponse::success(
-            new IntegrationHeaderResource($updated),
-            'Header updated successfully.'
+            IntegrationHeaderResource::collection(collect($updated)),
+            'Headers updated successfully.'
         );
     }
 

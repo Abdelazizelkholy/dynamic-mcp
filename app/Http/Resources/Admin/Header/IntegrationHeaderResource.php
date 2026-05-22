@@ -15,6 +15,7 @@ class IntegrationHeaderResource extends JsonResource
             'type_label'     => $this->typeLabel(),
             'header_key'     => $this->header_key,        // e.g. Authorization
             'require_from'   => $this->require_from,      // admin | user_integration
+            'concatenate_key' => $this->concatenate_key,
             'value'          => $this->value,             // static value or output key name
             'label'          => $this->label,
             'description'    => $this->description,
