@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\EnumController;
 use App\Http\Controllers\Admin\Integration\AuthStepFlattenController;
+use App\Http\Controllers\Admin\Integration\IntegrationGlobalBodyController;
 use App\Http\Controllers\Admin\Integration\IntegrationHeaderController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceHeaderController;
@@ -87,6 +88,16 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::put('/',          'update') ->middleware('permission:integration_update');
                 Route::delete('{id}',       'destroy')->middleware('permission:integration_delete');
                 Route::patch('{id}/toggle', 'toggle') ->middleware('permission:integration_update');
+            });
+
+
+        Route::prefix('{integrationId}/global-body')
+            ->controller(IntegrationGlobalBodyController::class)
+            ->group(function () {
+                Route::get('/',       'index')  ->middleware('permission:integration_read');
+                Route::post('/',      'store')  ->middleware('permission:integration_create');
+                Route::put('/',       'update') ->middleware('permission:integration_update');
+                Route::delete('{id}', 'destroy')->middleware('permission:integration_delete');
             });
 
         Route::prefix('{integrationId}/services')

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Repositories\Eloquent\IntegrationAuthStepRepository;
+use App\Repositories\Eloquent\IntegrationGlobalBodyRepository;
 use App\Repositories\Eloquent\IntegrationHeaderRepository;
 use App\Repositories\Eloquent\IntegrationRepository;
 use App\Repositories\Eloquent\IntegrationServiceHeaderRepository;
@@ -12,6 +13,7 @@ use App\Repositories\Eloquent\IntegrationServiceParamRepository;
 use App\Repositories\Eloquent\IntegrationServiceRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\IntegrationAuthStepRepositoryInterface;
+use App\Repositories\IntegrationGlobalBodyRepositoryInterface;
 use App\Repositories\IntegrationHeaderRepositoryInterface;
 use App\Repositories\IntegrationRepositoryInterface;
 use App\Repositories\IntegrationServiceHeaderRepositoryInterface;
@@ -38,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IntegrationServiceHeaderRepositoryInterface::class, IntegrationServiceHeaderRepository::class);
         $this->app->bind(IntegrationServiceInputGroupRepositoryInterface::class, IntegrationServiceInputGroupRepository::class);
         $this->app->bind(IntegrationServiceInputRepositoryInterface::class,     IntegrationServiceInputRepository::class);
+        $this->app->bind(IntegrationGlobalBodyRepositoryInterface::class,        IntegrationGlobalBodyRepository::class);
 
     }
 

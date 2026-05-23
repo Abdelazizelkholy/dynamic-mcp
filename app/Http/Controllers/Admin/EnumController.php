@@ -84,6 +84,11 @@ class EnumController extends Controller
                 ['key' => 'text/plain',                        'label' => 'Plain Text'],
             ],
 
+            'global_body_require_from' => [
+                ['key' => 'admin',            'label' => 'Admin'],
+                ['key' => 'user_integration', 'label' => 'User Integration'],
+            ],
+
         ], 'Enums retrieved successfully.');
     }
 }
