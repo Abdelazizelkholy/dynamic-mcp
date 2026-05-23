@@ -63,7 +63,7 @@ class IntegrationHeaderController extends Controller
     public function update(UpdateHeaderRequest $request, int $integrationId): JsonResponse
     {
         // 1. Delete all existing headers for this integration
-        \App\Models\IntegrationHeader::where('integration_id', $integrationId)->delete();
+        \App\Models\IntegrationHeader::where('integration_id', $integrationId)->pluck('id')->each(fn ($id) => $this->repo->delete($id));
 
         // 2. Insert new headers
         $created = [];
