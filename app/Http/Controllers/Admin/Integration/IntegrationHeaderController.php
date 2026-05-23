@@ -59,22 +59,24 @@ class IntegrationHeaderController extends Controller
     }
 
     // PUT /admin/integrations/{integrationId}/headers/{id}
+    // update() — remove all existing then insert new
     public function update(UpdateHeaderRequest $request, int $integrationId): JsonResponse
     {
-
+        // 1. Delete all existing headers for this integration
         \App\Models\IntegrationHeader::where('integration_id', $integrationId)->delete();
 
-        $updated = [];
+        // 2. Insert new headers
+        $created = [];
 
         foreach ($request->validated('headers') as $headerData) {
-            $updated[] = $this->repo->create(array_merge(
+            $created[] = $this->repo->create(array_merge(
                 $headerData,
                 ['integration_id' => $integrationId]
             ));
         }
 
         return ApiResponse::success(
-            IntegrationHeaderResource::collection(collect($updated)),
+            IntegrationHeaderResource::collection(collect($created)),
             'Headers updated successfully.'
         );
     }

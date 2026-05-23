@@ -84,7 +84,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('/',             'index')  ->middleware('permission:integration_read');
                 Route::post('/',            'store')  ->middleware('permission:integration_create');
                 Route::get('{id}',          'show')   ->middleware('permission:integration_read');
-                Route::put('{id}',          'update') ->middleware('permission:integration_update');
+                Route::put('',          'update') ->middleware('permission:integration_update');
                 Route::delete('{id}',       'destroy')->middleware('permission:integration_delete');
                 Route::patch('{id}/toggle', 'toggle') ->middleware('permission:integration_update');
             });
