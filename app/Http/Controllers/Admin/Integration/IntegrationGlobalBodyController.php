@@ -31,11 +31,22 @@ class IntegrationGlobalBodyController extends Controller
     // Deletes existing and inserts new — clean replace
     public function store(StoreGlobalBodyRequest $request, int $integrationId): JsonResponse
     {
-        $body = $this->repo->replaceAll($integrationId, $request->validated('body'));
+        $created = [];
+
+        foreach ($request->validated('body') as $index => $bodyData) {
+            // Get current max order and increment
+            $maxOrder = \App\Models\IntegrationGlobalBody::where('integration_id', $integrationId)
+                ->max('order') ?? 0;
+
+            $created[] = $this->repo->create(array_merge($bodyData, [
+                'integration_id' => $integrationId,
+                'order'          => $maxOrder + $index + 1,
+            ]));
+        }
 
         return ApiResponse::success(
-            IntegrationGlobalBodyResource::collection($body),
-            'Global body saved successfully.',
+            IntegrationGlobalBodyResource::collection(collect($created)),
+            'Global body added successfully.',
             201
         );
     }

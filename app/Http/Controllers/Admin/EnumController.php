@@ -32,8 +32,8 @@ class EnumController extends Controller
             ],
 
             'auth_types' => [
-                ['key' => 'oauth2',  'label' => 'OAuth 2.0'],
-                ['key' => 'api_key', 'label' => 'API Key'],
+                ['key' => 'call',  'label' => 'Call'],
+                ['key' => 'redirect ', 'label' => 'Redirect '],
                 ['key' => 'basic',   'label' => 'Basic Auth'],
                 ['key' => 'bearer',  'label' => 'Bearer Token'],
                 ['key' => 'custom',  'label' => 'Custom'],

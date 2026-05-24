@@ -30,7 +30,7 @@ return new class extends Migration {
 
             $table->string('name');
             $table->enum('step_type', ['login_callback', 'set_credentials', 'refresh_token']);
-            $table->enum('auth_type', ['oauth2', 'api_key', 'basic', 'bearer', 'custom'])->default('oauth2');
+            $table->enum('auth_type', ['call', 'redirect'])->default('call');
             $table->enum('http_method', ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])->default('POST');
 
             $table->string('base_endpoint_url');
