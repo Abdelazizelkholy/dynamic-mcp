@@ -33,10 +33,7 @@ class EnumController extends Controller
 
             'auth_types' => [
                 ['key' => 'call',  'label' => 'Call'],
-                ['key' => 'redirect ', 'label' => 'Redirect '],
-                ['key' => 'basic',   'label' => 'Basic Auth'],
-                ['key' => 'bearer',  'label' => 'Bearer Token'],
-                ['key' => 'custom',  'label' => 'Custom'],
+                ['key' => 'redirect ', 'label' => 'Redirect ']
             ],
 
             'http_methods' => [
