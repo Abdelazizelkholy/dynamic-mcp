@@ -53,12 +53,19 @@ class IntegrationGlobalBodyController extends Controller
 
     // PUT /admin/integrations/{integrationId}/global-body
     // Same as store — delete all then insert new
-    public function update(UpdateGlobalBodyRequest $request, int $integrationId): JsonResponse
+    // PUT /admin/integrations/{integrationId}/global-body/{id}
+    public function update(UpdateGlobalBodyRequest $request, int $integrationId, int $id): JsonResponse
     {
-        $body = $this->repo->replaceAll($integrationId, $request->validated('body'));
+        $body = $this->repo->find($id);
+
+        if (! $body || $body->integration_id !== $integrationId) {
+            return ApiResponse::error('Global body not found.', 404);
+        }
+
+        $updated = $this->repo->update($id, $request->validated());
 
         return ApiResponse::success(
-            IntegrationGlobalBodyResource::collection($body),
+            new IntegrationGlobalBodyResource($updated),
             'Global body updated successfully.'
         );
     }

@@ -8,15 +8,15 @@ class UpdateGlobalBodyRequest extends FormRequest
 {
     public function authorize(): bool { return true; }
 
+    // UpdateGlobalBodyRequest
     public function rules(): array
     {
         return [
-            'body'                  => ['required', 'array', 'min:1'],
-            'body.*.key'            => ['required', 'string', 'max:255'],
-            'body.*.require_from'   => ['required', 'in:admin,user_integration'],
-            'body.*.value'          => ['nullable', 'string'],
-            'body.*.label'          => ['nullable', 'string', 'max:255'],
-            'body.*.description'    => ['nullable', 'string'],
+            'key'          => ['sometimes', 'string', 'max:255'],
+            'require_from' => ['sometimes', 'in:admin,user_integration'],
+            'value'        => ['nullable', 'string'],
+            'label'        => ['nullable', 'string', 'max:255'],
+            'description'  => ['nullable', 'string'],
         ];
     }
 

@@ -28,6 +28,14 @@ class IntegrationGlobalBodyRepository implements IntegrationGlobalBodyRepository
         return $this->model->create($data);
     }
 
+    public function update(int $id, array $data): IntegrationGlobalBody
+    {
+        $body = $this->model->findOrFail($id);
+        $body->update($data);
+
+        return $body->fresh();
+    }
+
     /**
      * Delete all existing bodies for this integration then insert new ones.
      * Used for both store() and update() — always a clean replace.

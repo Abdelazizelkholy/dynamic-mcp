@@ -13,6 +13,8 @@ interface IntegrationGlobalBodyRepositoryInterface
 
     public function create(array $data): IntegrationGlobalBody;
 
+    public function update(int $id, array $data): IntegrationGlobalBody;
+
     public function replaceAll(int $integrationId, array $bodies): Collection;
 
     public function delete(int $id): bool;
