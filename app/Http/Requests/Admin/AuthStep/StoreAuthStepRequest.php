@@ -89,7 +89,6 @@ class StoreAuthStepRequest extends FormRequest
     {
         return [
             'step_type.in'          => 'step_type must be one of: login_callback, set_credentials, refresh_token.',
-            'auth_type.in'          => 'auth_type must be one of: oauth2, api_key, basic, bearer, custom.',
             'http_method.in'        => 'http_method must be one of: GET, POST, PUT, PATCH, DELETE.',
             'inputs.*.require_from.in' => 'require_from must be one of: admin, user, front, response, user_integration, previous_step_response.',
         ];
