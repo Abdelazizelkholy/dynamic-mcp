@@ -14,7 +14,7 @@ class StoreAuthStepRequest extends FormRequest
         return [
             'name'              => ['required', 'string', 'max:255'],
             'step_type'         => ['required', 'in:login_callback,set_credentials,refresh_token'],
-            'auth_type'         => ['required', 'in:call, redirect'],
+            'auth_type'         => ['required', 'in:call,redirect'],
             'http_method'       => ['required', 'in:GET,POST,PUT,PATCH,DELETE'],
             'base_endpoint_url' => ['required', 'url'],
             'is_active'         => ['sometimes', 'boolean'],

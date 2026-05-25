@@ -14,7 +14,7 @@ class UpdateAuthStepRequest extends FormRequest
         return [
             'name'              => ['sometimes', 'string', 'max:255'],
             'step_type'         => ['sometimes', 'in:login_callback,set_credentials,refresh_token'],
-            'auth_type'         => ['sometimes', 'in:call, redirect'],
+            'auth_type'         => ['sometimes', 'in:call,redirect'],
             'http_method'       => ['sometimes', 'in:GET,POST,PUT,PATCH,DELETE'],
             'base_endpoint_url' => ['sometimes', 'url'],
             'is_active'         => ['sometimes', 'boolean'],
