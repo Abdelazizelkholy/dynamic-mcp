@@ -4,7 +4,6 @@ namespace App\Http\Requests\Admin\Service;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-use Illuminate\Validation\Validator;
 
 
 class StoreServiceRequest extends FormRequest
