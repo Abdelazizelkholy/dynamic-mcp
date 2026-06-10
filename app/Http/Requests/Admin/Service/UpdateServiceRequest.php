@@ -12,7 +12,7 @@ class UpdateServiceRequest extends FormRequest
     {
         return [
             'service_name_en'           => ['sometimes', 'string', 'max:255'],
-            'service_name_ar'           => ['required', 'string', 'max:255'],
+            'service_name_ar'           => ['sometimes', 'string', 'max:255'],
             'http_method'            => ['sometimes', 'in:GET,POST,PUT,PATCH,DELETE'],
             'content_type'           => ['sometimes', 'in:application/json,multipart/form-data,application/x-www-form-urlencoded,text/plain'],
             'endpoint_path'          => ['sometimes', 'string', 'max:500'],
