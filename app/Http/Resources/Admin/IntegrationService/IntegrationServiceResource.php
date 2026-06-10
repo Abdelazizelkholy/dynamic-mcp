@@ -14,7 +14,8 @@ class IntegrationServiceResource extends JsonResource
             'integration_id' => $this->integration_id,
 
             // Main Data
-            'service_name' => $this->service_name,
+            'service_name_en' => $this->service_name_en,
+            'service_name_ar' => $this->service_name_ar,
             'http_method' => $this->http_method,
             'content_type' => $this->content_type,
             'endpoint_path' => $this->endpoint_path,

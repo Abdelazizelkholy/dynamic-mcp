@@ -11,7 +11,8 @@ class StoreServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'service_name'           => ['required', 'string', 'max:255'],
+            'service_name_en'           => ['required', 'string', 'max:255'],
+            'service_name_ar'           => ['required', 'string', 'max:255'],
             'http_method'            => ['required', 'in:GET,POST,PUT,PATCH,DELETE'],
             'content_type'           => ['required', 'in:application/json,multipart/form-data,application/x-www-form-urlencoded,text/plain'],
             'endpoint_path'          => ['required', 'string', 'max:500'],

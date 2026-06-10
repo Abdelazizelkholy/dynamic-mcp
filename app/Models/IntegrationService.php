@@ -13,7 +13,8 @@ class IntegrationService extends Model implements HasMedia
 
     protected $fillable = [
         'integration_id',
-        'service_name',
+        'service_name_en',
+        'service_name_ar',
         'http_method',
         'content_type',
         'endpoint_path',

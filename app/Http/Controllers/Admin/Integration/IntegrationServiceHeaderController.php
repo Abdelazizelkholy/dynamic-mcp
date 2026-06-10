@@ -42,37 +42,43 @@ class IntegrationServiceHeaderController extends Controller
         return ApiResponse::success(new IntegrationServiceHeaderResource($header));
     }
 
-    // POST /admin/integrations/{integrationId}/services/{serviceId}/headers
     public function store(StoreServiceHeaderRequest $request, int $integrationId, int $serviceId): JsonResponse
-    {
-        $header = $this->repo->create(array_merge(
-            $request->validated(),
+{
+    // Delete existing then insert new
+    \App\Models\IntegrationServiceHeader::where('integration_service_id', $serviceId)->delete();
+
+    $created = [];
+    foreach ($request->validated('headers') as $headerData) {
+        $created[] = $this->repo->create(array_merge(
+            $headerData,
             ['integration_service_id' => $serviceId]
         ));
-
-        return ApiResponse::success(
-            new IntegrationServiceHeaderResource($header),
-            'Service header created successfully.',
-            201
-        );
     }
 
-    // PUT /admin/integrations/{integrationId}/services/{serviceId}/headers/{id}
-    public function update(UpdateServiceHeaderRequest $request, int $integrationId, int $serviceId, int $id): JsonResponse
-    {
-        $header = $this->repo->find($id);
+    return ApiResponse::success(
+        IntegrationServiceHeaderResource::collection(collect($created)),
+        'Service headers saved successfully.',
+        201
+    );
+}
 
-        if (!$header || $header->integration_service_id !== $serviceId) {
-            return ApiResponse::error('Service header not found.', 404);
-        }
+public function update(UpdateServiceHeaderRequest $request, int $integrationId, int $serviceId): JsonResponse
+{
+    \App\Models\IntegrationServiceHeader::where('integration_service_id', $serviceId)->delete();
 
-        $updated = $this->repo->update($id, $request->validated());
-
-        return ApiResponse::success(
-            new IntegrationServiceHeaderResource($updated),
-            'Service header updated successfully.'
-        );
+    $updated = [];
+    foreach ($request->validated('headers') as $headerData) {
+        $updated[] = $this->repo->create(array_merge(
+            $headerData,
+            ['integration_service_id' => $serviceId]
+        ));
     }
+
+    return ApiResponse::success(
+        IntegrationServiceHeaderResource::collection(collect($updated)),
+        'Service headers updated successfully.'
+    );
+}
 
     // DELETE /admin/integrations/{integrationId}/services/{serviceId}/headers/{id}
     public function destroy(int $integrationId, int $serviceId, int $id): JsonResponse

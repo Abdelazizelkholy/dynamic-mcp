@@ -34,7 +34,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('integration_id')->constrained()->cascadeOnDelete();
 
-            $table->string('service_name');
+            $table->string('service_name_en')->nullable();
+            $table->string('service_name_ar')->nullable();
             $table->enum('http_method', ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])->default('GET');
             $table->enum('content_type', [
                 'application/json',

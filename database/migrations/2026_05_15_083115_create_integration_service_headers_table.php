@@ -34,7 +34,7 @@ return new class extends Migration {
 
             $table->enum('type', ['normal', 'bearer', 'basic_auth'])->default('normal');
             $table->string('header_key');
-
+            $table->string('concatenate_key')->nullable();    
             $table->enum('require_from', ['admin', 'user', 'user_integration'])->default('admin');
             $table->string('value')->nullable();
 
