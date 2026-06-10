@@ -124,15 +124,15 @@ Route::middleware('auth:sanctum')->group(function () {
                     });
 
                 Route::prefix('{serviceId}/headers')
-                    ->controller(IntegrationServiceHeaderController::class)
-                    ->group(function () {
-                        Route::get('/',             'index');
-                        Route::post('/',            'store');
-                        Route::get('{id}',          'show');
-                        Route::put('{id}',          'update');
-                        Route::delete('{id}',       'destroy');
-                        Route::patch('{id}/toggle', 'toggle');
-                    });
+    ->controller(IntegrationServiceHeaderController::class)
+    ->group(function () {
+        Route::get('/',             'index');
+        Route::post('/',            'store');
+        Route::put('/',             'update');   // ← no {id}
+        Route::get('{id}',          'show');
+        Route::delete('{id}',       'destroy');
+        Route::patch('{id}/toggle', 'toggle');
+    });
 
                 Route::prefix('{serviceId}/input-groups')
                     ->controller(IntegrationServiceInputGroupController::class)
