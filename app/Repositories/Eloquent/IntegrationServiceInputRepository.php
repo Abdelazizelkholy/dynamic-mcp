@@ -13,29 +13,31 @@ class IntegrationServiceInputRepository implements IntegrationServiceInputReposi
     {
     }
 
-    public function standaloneByService(int $serviceId): Collection
-    {
-        return $this->model
-            ->with('dynamicService:id,service_name')
-            ->where('integration_service_id', $serviceId)
-            ->whereNull('group_id')
-            ->orderBy('order')
-            ->get();
-    }
+public function standaloneByService(int $serviceId): Collection
+{
+    return $this->model
+        ->with('dynamicService:id,service_name_en,service_name_ar')
+        ->where('integration_service_id', $serviceId)
+        ->whereNull('group_id')
+        ->orderBy('order')
+        ->get();
+}
 
-    public function byGroup(int $groupId): Collection
-    {
-        return $this->model
-            ->with('dynamicService:id,service_name')
-            ->where('group_id', $groupId)
-            ->orderBy('order')
-            ->get();
-    }
+public function byGroup(int $groupId): Collection
+{
+    return $this->model
+        ->with('dynamicService:id,service_name_en,service_name_ar')
+        ->where('group_id', $groupId)
+        ->orderBy('order')
+        ->get();
+}
 
-    public function find(int $id): ?IntegrationServiceInput
-    {
-        return $this->model->with('dynamicService:id,service_name')->find($id);
-    }
+public function find(int $id): ?IntegrationServiceInput
+{
+    return $this->model
+        ->with('dynamicService:id,service_name_en,service_name_ar')
+        ->find($id);
+}
 
     public function create(array $data): IntegrationServiceInput
     {
