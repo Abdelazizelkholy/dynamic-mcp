@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\ServiceInput;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreInputRequest extends FormRequest
+class StoreGroupWithInputsRequest extends FormRequest
 {
     public function authorize(): bool
     {
