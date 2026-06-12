@@ -14,11 +14,15 @@ use Illuminate\Http\JsonResponse;
 
 class IntegrationServiceInputGroupController extends Controller
 {
-    public function __construct(
-        private readonly IntegrationServiceInputGroupRepositoryInterface $repo
-    )
-    {
-    }
+    use App\Repositories\IntegrationServiceInputRepositoryInterface;
+use App\Repositories\IntegrationServiceInputGroupRepositoryInterface;
+
+public function __construct(
+    private readonly IntegrationServiceInputGroupRepositoryInterface $repo,
+    private readonly IntegrationServiceInputRepositoryInterface $inputRepo,
+)
+{
+}
 
     // GET /admin/integrations/{integrationId}/services/{serviceId}/input-groups
     public function index(int $integrationId, int $serviceId): JsonResponse
