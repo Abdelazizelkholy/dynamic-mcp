@@ -6,7 +6,8 @@ namespace App\Http\Controllers\Admin\Integration;
 use App\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ServiceInput\StoreGroupRequest;
-use App\Http\Requests\Admin\ServiceInput\UpdateGroupRequest;
+use App\Http\Requests\Admin\ServiceInput\UpdateGroupRequest; 
+use App\Http\Requests\Admin\ServiceInput\StoreGroupWithInputsRequest;
 use App\Http\Resources\Admin\ServiceInput\IntegrationServiceInputGroupResource;
 use App\Repositories\IntegrationServiceInputGroupRepositoryInterface;
 use Illuminate\Http\JsonResponse;
@@ -56,6 +57,54 @@ class IntegrationServiceInputGroupController extends Controller
             201
         );
     }
+
+
+    public function storeWithInputs(StoreGroupWithInputsRequest $request, int $integrationId, int $serviceId): JsonResponse
+{
+    $result = [];
+
+    foreach ($request->validated('groups') as $groupData) {
+        $result[] = $this->createGroupRecursive($groupData, $serviceId);
+    }
+
+    return ApiResponse::success($result, 'Groups with inputs created successfully.', 201);
+}
+
+private function createGroupRecursive(array $groupData, int $serviceId, ?int $parentGroupId = null): array
+{
+    // Create the group
+    $maxOrder = \App\Models\IntegrationServiceInputGroup::where('integration_service_id', $serviceId)->max('order') ?? 0;
+
+    $group = $this->groupRepo->create([
+        'integration_service_id' => $serviceId,
+        'key_name'               => $groupData['key_name'],
+        'data_type'              => $groupData['data_type'],
+        'order'                  => $maxOrder + 1,
+    ]);
+
+    $inputs = [];
+
+    foreach ($groupData['inputs'] ?? [] as $index => $inputData) {
+        // If this input is itself a group → recurse
+        if ($inputData['field_type'] === 'group' && ! empty($inputData['group'])) {
+            $inputs[] = $this->createGroupRecursive($inputData['group'], $serviceId, $group->id);
+            continue;
+        }
+
+        // Regular input inside the group
+        $inputs[] = $this->inputRepo->create(array_merge($inputData, [
+            'integration_service_id' => $serviceId,
+            'group_id'               => $group->id,
+            'order'                  => $index + 1,
+        ]));
+    }
+
+    return [
+        'group'  => new IntegrationServiceInputGroupResource($group),
+        'inputs' => IntegrationServiceInputResource::collection(collect($inputs)),
+    ];
+}
+
 
     // PUT /admin/integrations/{integrationId}/services/{serviceId}/input-groups/{id}
     public function update(UpdateGroupRequest $request, int $integrationId, int $serviceId, int $id): JsonResponse

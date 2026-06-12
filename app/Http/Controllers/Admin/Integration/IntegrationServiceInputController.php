@@ -45,18 +45,27 @@ class IntegrationServiceInputController extends Controller
 
     // POST /admin/integrations/{integrationId}/services/{serviceId}/inputs
     public function store(StoreInputRequest $request, int $integrationId, int $serviceId): JsonResponse
-    {
-        $input = $this->repo->create(array_merge(
-            $request->validated(),
-            ['integration_service_id' => $serviceId]
-        ));
+{
+    $created = [];
 
-        return ApiResponse::success(
-            new IntegrationServiceInputResource($input),
-            'Input created successfully.',
-            201
-        );
+    foreach ($request->validated('inputs') as $index => $inputData) {
+        $maxOrder = \App\Models\IntegrationServiceInput::where('integration_service_id', $serviceId)
+            ->whereNull('group_id')
+            ->max('order') ?? 0;
+
+        $created[] = $this->repo->create(array_merge($inputData, [
+            'integration_service_id' => $serviceId,
+            'group_id'               => null,
+            'order'                  => $maxOrder + $index + 1,
+        ]));
     }
+
+    return ApiResponse::success(
+        IntegrationServiceInputResource::collection(collect($created)),
+        'Inputs created successfully.',
+        201
+    );
+}
 
     // PUT /admin/integrations/{integrationId}/services/{serviceId}/inputs/{id}
     public function update(UpdateInputRequest $request, int $integrationId, int $serviceId, int $id): JsonResponse

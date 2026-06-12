@@ -158,6 +158,8 @@ Route::middleware('auth:sanctum')->group(function () {
                         Route::delete('{id}', 'destroy');
                     });
 
+            Route::post('{serviceId}/input-groups/with-inputs', [IntegrationServiceInputGroupController::class, 'storeWithInputs']);        
+
 
             });
 
