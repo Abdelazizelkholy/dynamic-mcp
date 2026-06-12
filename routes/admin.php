@@ -134,6 +134,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('{id}/toggle', 'toggle');
     });
 
+
+                Route::post('{serviceId}/input-groups/with-inputs', [IntegrationServiceInputGroupController::class, 'storeWithInputs']);        
+
+
                 Route::prefix('{serviceId}/input-groups')
                     ->controller(IntegrationServiceInputGroupController::class)
                     ->group(function () {
@@ -157,8 +161,6 @@ Route::middleware('auth:sanctum')->group(function () {
                         Route::put('{id}',    'update');
                         Route::delete('{id}', 'destroy');
                     });
-
-            Route::post('{serviceId}/input-groups/with-inputs', [IntegrationServiceInputGroupController::class, 'storeWithInputs']);        
 
 
             });
