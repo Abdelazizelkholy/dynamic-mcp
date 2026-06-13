@@ -17,23 +17,19 @@ class StoreInputRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'inputs' => ['required', 'array', 'min:1'],
-            'inputs.*.key' => ['required', 'string', 'max:255'],
-            'inputs.*.placeholder' => ['nullable', 'string', 'max:255'],
-            'inputs.*.options' => ['nullable', 'array'],
-            'inputs.*.options.*' => ['string'],
-            'inputs.*.dynamic_service_id' => ['nullable', 'integer', 'exists:integration_services,id'],
-
-            /////////////////////////////
-            // field_type — add date, datetime
-            'inputs.*.field_type' => ['required', 'in:input,select,dynamic_select,boolean,group,file,file_url,files,files_url,date,datetime'],
-            'inputs.*.date_format' => ['required', 'string', 'max:50'],
-            'inputs.*.type' => ['required', 'in:params,input'],
-            'inputs.*.key_type' => ['required', 'in:body,headers'],
-            'inputs.*.validation' => ['required', 'in:required,nullable'],
-            'inputs.*.require_from' => ['required', 'in:admin,user,front,response,user_integration,dependency_service'],
-
-
+            'inputs'                       => ['required', 'array', 'min:1'],
+            'inputs.*.field_type'          => ['required', 'in:input,select,dynamic_select,boolean,group,file,file_url,files,files_url,date,datetime'],
+            'inputs.*.key'                 => ['required', 'string', 'max:255'],
+            'inputs.*.placeholder'         => ['nullable', 'string'],
+            'inputs.*.type'                => ['nullable', 'in:params,input'],      // ← nullable
+            'inputs.*.key_type'            => ['required', 'in:body,headers'],
+            'inputs.*.validation'          => ['required', 'in:required,nullable'],
+            'inputs.*.require_from'        => ['required', 'in:admin,user,front,response,user_integration,dependency_service'],
+            'inputs.*.options'             => ['nullable', 'array'],
+            'inputs.*.options.*'           => ['string'],
+            'inputs.*.dynamic_service_id'  => ['nullable', 'integer', 'exists:integration_services,id'],
+            'inputs.*.date_format'         => ['nullable', 'string', 'max:50'],     // ← nullable هنا
+            'inputs.*.label'               => ['nullable', 'string', 'max:255'],
         ];
     }
 
