@@ -18,13 +18,15 @@ class UpdateGroupWithInputsRequest extends FormRequest
             'groups.*.data_type'                        => ['sometimes', 'in:object,array_of_objects,array'],
             'groups.*.inputs'                           => ['nullable', 'array'],
             'groups.*.inputs.*.id'                      => ['nullable', 'integer', 'exists:integration_service_inputs,id'],
-            'groups.*.inputs.*.field_type'              => ['required_with:groups.*.inputs', 'in:input,select,dynamic_select,boolean,group,file,file_url,files,files_url,date,datetime'],
-            'groups.*.inputs.*.key'                     => ['required_with:groups.*.inputs', 'string', 'max:255'],
+
+            // ✅ كل fields بـ sometimes — لأن لو id موجود مش لازم نبعت كل حاجة
+            'groups.*.inputs.*.field_type'              => ['sometimes', 'in:input,select,dynamic_select,boolean,group,file,file_url,files,files_url,date,datetime'],
+            'groups.*.inputs.*.key'                     => ['sometimes', 'string', 'max:255'],
             'groups.*.inputs.*.placeholder'             => ['nullable', 'string'],
             'groups.*.inputs.*.type'                    => ['nullable', 'in:params,input'],
-            'groups.*.inputs.*.key_type'                => ['required_with:groups.*.inputs', 'in:body,headers'],
-            'groups.*.inputs.*.validation'              => ['required_with:groups.*.inputs', 'in:required,nullable'],
-            'groups.*.inputs.*.require_from'            => ['required_with:groups.*.inputs', 'in:admin,user,front,response,user_integration,dependency_service'],
+            'groups.*.inputs.*.key_type'                => ['sometimes', 'in:body,headers'],
+            'groups.*.inputs.*.validation'              => ['sometimes', 'in:required,nullable'],
+            'groups.*.inputs.*.require_from'            => ['sometimes', 'in:admin,user,front,response,user_integration,dependency_service'],
             'groups.*.inputs.*.options'                 => ['nullable', 'array'],
             'groups.*.inputs.*.options.*'               => ['string'],
             'groups.*.inputs.*.dynamic_service_id'      => ['nullable', 'integer', 'exists:integration_services,id'],
@@ -33,8 +35,8 @@ class UpdateGroupWithInputsRequest extends FormRequest
             // Nested group
             'groups.*.inputs.*.group'                   => ['nullable', 'array'],
             'groups.*.inputs.*.group.id'                => ['nullable', 'integer', 'exists:integration_service_input_groups,id'],
-            'groups.*.inputs.*.group.key_name'          => ['required_with:groups.*.inputs.*.group', 'string'],
-            'groups.*.inputs.*.group.data_type'         => ['required_with:groups.*.inputs.*.group', 'in:object,array_of_objects,array'],
+            'groups.*.inputs.*.group.key_name'          => ['sometimes', 'string'],
+            'groups.*.inputs.*.group.data_type'         => ['sometimes', 'in:object,array_of_objects,array'],
             'groups.*.inputs.*.group.inputs'            => ['nullable', 'array'],
         ];
     }
@@ -44,8 +46,13 @@ class UpdateGroupWithInputsRequest extends FormRequest
         $validator->after(function (Validator $v) {
             foreach ($this->input('groups', []) as $gIndex => $group) {
                 foreach ($group['inputs'] ?? [] as $iIndex => $input) {
-                    $ft = $input['field_type'] ?? '';
+                    $ft        = $input['field_type'] ?? '';
+                    $hasId     = ! empty($input['id']);
 
+                    // لو موجود id → update جزئي → مش محتاجين conditional checks
+                    if ($hasId) continue;
+
+                    // لو input جديد → نتحقق
                     if ($ft === 'select' && empty($input['options'])) {
                         $v->errors()->add(
                             "groups.{$gIndex}.inputs.{$iIndex}.options",
