@@ -86,6 +86,52 @@ class EnumController extends Controller
                 ['key' => 'user_integration', 'label' => 'User Integration'],
             ],
 
+
+            'input_field_types' => [
+                ['key' => 'input',          'label' => 'Text'],
+                ['key' => 'select',         'label' => 'Select'],
+                ['key' => 'dynamic_select', 'label' => 'Dynamic Select'],
+                ['key' => 'boolean',        'label' => 'Boolean'],
+                ['key' => 'group',          'label' => 'Group'],
+                ['key' => 'file',           'label' => 'File'],
+                ['key' => 'file_url',       'label' => 'File URL'],
+                ['key' => 'files',          'label' => 'Multiple Files'],
+                ['key' => 'files_url',      'label' => 'Files URL'],
+                ['key' => 'date',           'label' => 'Date'],       // ← new
+                ['key' => 'datetime',       'label' => 'Date Time'],  // ← new
+            ],
+
+            'input_types' => [
+                ['key' => 'params', 'label' => 'Params'],
+                ['key' => 'input',  'label' => 'Input'],
+            ],
+
+            'input_key_types' => [
+                ['key' => 'body',    'label' => 'Body'],
+                ['key' => 'headers', 'label' => 'Headers'],
+            ],
+
+            'input_validations' => [
+                ['key' => 'required', 'label' => 'Required'],
+                ['key' => 'nullable', 'label' => 'Nullable'],
+            ],
+
+            'input_require_from' => [
+                ['key' => 'admin',              'label' => 'Admin'],
+                ['key' => 'user',               'label' => 'User'],
+                ['key' => 'front',              'label' => 'Front'],
+                ['key' => 'response',           'label' => 'Response'],
+                ['key' => 'user_integration',   'label' => 'User Integration'],
+                ['key' => 'dependency_service', 'label' => 'Dependency Service'],  // ← new
+            ],
+
+            'input_group_data_types' => [
+                ['key' => 'object',           'label' => 'Object'],
+                ['key' => 'array',            'label' => 'Array'],
+                ['key' => 'array_of_objects', 'label' => 'Array of Object'],
+            ],
+
+
         ], 'Enums retrieved successfully.');
     }
 }

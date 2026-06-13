@@ -12,6 +12,7 @@ class IntegrationServiceInput extends Model
     protected $fillable = [
         'integration_service_id',
         'group_id',
+        'parent_group_id',
         'field_type',
         'key',
         'placeholder',
@@ -21,6 +22,7 @@ class IntegrationServiceInput extends Model
         'require_from',
         'options',
         'dynamic_service_id',
+        'date_format',
         'order',
     ];
 

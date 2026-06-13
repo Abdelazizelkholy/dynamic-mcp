@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\ServiceInput;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
-class StoreGroupWithInputsRequest extends FormRequest
+class UpdateGroupWithInputsRequest extends FormRequest
 {
     public function authorize(): bool { return true; }
 
@@ -13,9 +13,11 @@ class StoreGroupWithInputsRequest extends FormRequest
     {
         return [
             'groups'                                    => ['required', 'array', 'min:1'],
-            'groups.*.key_name'                         => ['required', 'string', 'max:255'],
-            'groups.*.data_type'                        => ['required', 'in:object,array_of_objects,array'],
+            'groups.*.id'                               => ['required', 'integer', 'exists:integration_service_input_groups,id'],
+            'groups.*.key_name'                         => ['sometimes', 'string', 'max:255'],
+            'groups.*.data_type'                        => ['sometimes', 'in:object,array_of_objects,array'],
             'groups.*.inputs'                           => ['nullable', 'array'],
+            'groups.*.inputs.*.id'                      => ['nullable', 'integer', 'exists:integration_service_inputs,id'],
             'groups.*.inputs.*.field_type'              => ['required_with:groups.*.inputs', 'in:input,select,dynamic_select,boolean,group,file,file_url,files,files_url,date,datetime'],
             'groups.*.inputs.*.key'                     => ['required_with:groups.*.inputs', 'string', 'max:255'],
             'groups.*.inputs.*.placeholder'             => ['nullable', 'string'],
@@ -28,8 +30,9 @@ class StoreGroupWithInputsRequest extends FormRequest
             'groups.*.inputs.*.dynamic_service_id'      => ['nullable', 'integer', 'exists:integration_services,id'],
             'groups.*.inputs.*.date_format'             => ['nullable', 'string', 'max:50'],
 
-            // Nested group inside group
+            // Nested group
             'groups.*.inputs.*.group'                   => ['nullable', 'array'],
+            'groups.*.inputs.*.group.id'                => ['nullable', 'integer', 'exists:integration_service_input_groups,id'],
             'groups.*.inputs.*.group.key_name'          => ['required_with:groups.*.inputs.*.group', 'string'],
             'groups.*.inputs.*.group.data_type'         => ['required_with:groups.*.inputs.*.group', 'in:object,array_of_objects,array'],
             'groups.*.inputs.*.group.inputs'            => ['nullable', 'array'],

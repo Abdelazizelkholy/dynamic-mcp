@@ -16,8 +16,16 @@ class IntegrationServiceInputGroupRepository implements IntegrationServiceInputG
     public function allByService(int $serviceId): Collection
     {
         return $this->model
-            ->with('inputs')   // eager load child inputs
+            ->with([
+                'inputs' => function ($q) {
+                    $q->with([
+                        'inputs',
+                        'dynamicService:id,service_name_en,service_name_ar'
+                    ])->orderBy('order');
+                }
+            ])
             ->where('integration_service_id', $serviceId)
+            ->whereNull('parent_group_id')
             ->orderBy('order')
             ->get();
     }

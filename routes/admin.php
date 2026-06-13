@@ -136,6 +136,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
                 Route::post('{serviceId}/input-groups/with-inputs', [IntegrationServiceInputGroupController::class, 'storeWithInputs']);
+                Route::put('{serviceId}/input-groups/with-inputs',        [IntegrationServiceInputGroupController::class,  'updateWithInputs']);
 
 
                 Route::prefix('{serviceId}/input-groups')

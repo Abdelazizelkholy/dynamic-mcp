@@ -68,19 +68,25 @@ class IntegrationServiceInputController extends Controller
 }
 
     // PUT /admin/integrations/{integrationId}/services/{serviceId}/inputs/{id}
-    public function update(UpdateInputRequest $request, int $integrationId, int $serviceId, int $id): JsonResponse
+    public function update(UpdateInputRequest $request, int $integrationId, int $serviceId): JsonResponse
     {
-        $input = $this->repo->find($id);
+        $updated = [];
 
-        if (!$input || $input->integration_service_id !== $serviceId) {
-            return ApiResponse::error('Input not found.', 404);
+        foreach ($request->validated('inputs') as $inputData) {
+            $id    = $inputData['id'];
+            $input = $this->repo->find($id);
+
+            if (! $input || $input->integration_service_id !== $serviceId) {
+                return ApiResponse::error("Input {$id} not found.", 404);
+            }
+
+            unset($inputData['id']);
+            $updated[] = $this->repo->update($id, $inputData);
         }
 
-        $updated = $this->repo->update($id, $request->validated());
-
         return ApiResponse::success(
-            new IntegrationServiceInputResource($updated),
-            'Input updated successfully.'
+            IntegrationServiceInputResource::collection(collect($updated)),
+            'Inputs updated successfully.'
         );
     }
 
