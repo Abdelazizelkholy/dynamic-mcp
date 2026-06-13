@@ -10,6 +10,8 @@ use App\Http\Requests\Admin\ServiceInput\StoreGroupWithInputsRequest;
 use App\Http\Requests\Admin\ServiceInput\UpdateGroupWithInputsRequest;
 use App\Http\Resources\Admin\ServiceInput\IntegrationServiceInputGroupResource;
 use App\Http\Resources\Admin\ServiceInput\IntegrationServiceInputResource;
+use App\Models\IntegrationServiceInput;
+use App\Models\IntegrationServiceInputGroup;
 use App\Repositories\IntegrationServiceInputGroupRepositoryInterface;
 use App\Repositories\IntegrationServiceInputRepositoryInterface;
 use Illuminate\Http\JsonResponse;
@@ -21,7 +23,7 @@ class IntegrationServiceInputGroupController extends Controller
         private readonly IntegrationServiceInputRepositoryInterface $inputRepo,
     ) {}
 
-    // ── GET /integrations/{integrationId}/services/{serviceId}/input-groups ───
+    // GET /integrations/{integrationId}/services/{serviceId}/input-groups
     public function index(int $integrationId, int $serviceId): JsonResponse
     {
         $groups = $this->groupRepo->allByService($serviceId);
@@ -32,7 +34,7 @@ class IntegrationServiceInputGroupController extends Controller
         );
     }
 
-    // ── GET /integrations/{integrationId}/services/{serviceId}/input-groups/{id}
+    // GET /integrations/{integrationId}/services/{serviceId}/input-groups/{id}
     public function show(int $integrationId, int $serviceId, int $id): JsonResponse
     {
         $group = $this->groupRepo->find($id);
@@ -44,7 +46,7 @@ class IntegrationServiceInputGroupController extends Controller
         return ApiResponse::success(new IntegrationServiceInputGroupResource($group));
     }
 
-    // ── POST /integrations/{integrationId}/services/{serviceId}/input-groups ──
+    // POST /integrations/{integrationId}/services/{serviceId}/input-groups
     public function store(StoreGroupRequest $request, int $integrationId, int $serviceId): JsonResponse
     {
         $group = $this->groupRepo->create(array_merge(
@@ -59,7 +61,7 @@ class IntegrationServiceInputGroupController extends Controller
         );
     }
 
-    // ── POST /integrations/{integrationId}/services/{serviceId}/input-groups/with-inputs
+    // POST /integrations/{integrationId}/services/{serviceId}/input-groups/with-inputs
     public function storeWithInputs(StoreGroupWithInputsRequest $request, int $integrationId, int $serviceId): JsonResponse
     {
         $result = [];
@@ -71,7 +73,7 @@ class IntegrationServiceInputGroupController extends Controller
         return ApiResponse::success($result, 'Groups with inputs created successfully.', 201);
     }
 
-    // ── PUT /integrations/{integrationId}/services/{serviceId}/input-groups/with-inputs
+    // PUT /integrations/{integrationId}/services/{serviceId}/input-groups/with-inputs
     public function updateWithInputs(UpdateGroupWithInputsRequest $request, int $integrationId, int $serviceId): JsonResponse
     {
         $result = [];
@@ -83,7 +85,7 @@ class IntegrationServiceInputGroupController extends Controller
         return ApiResponse::success($result, 'Groups with inputs updated successfully.');
     }
 
-    // ── PUT /integrations/{integrationId}/services/{serviceId}/input-groups/{id}
+    // PUT /integrations/{integrationId}/services/{serviceId}/input-groups/{id}
     public function update(UpdateGroupRequest $request, int $integrationId, int $serviceId, int $id): JsonResponse
     {
         $group = $this->groupRepo->find($id);
@@ -100,7 +102,8 @@ class IntegrationServiceInputGroupController extends Controller
         );
     }
 
-    // ── DELETE /integrations/{integrationId}/services/{serviceId}/input-groups/{id}
+    // DELETE /integrations/{integrationId}/services/{serviceId}/input-groups/{id}
+    // Deletes group + all nested inputs and groups recursively
     public function destroy(int $integrationId, int $serviceId, int $id): JsonResponse
     {
         $group = $this->groupRepo->find($id);
@@ -109,19 +112,18 @@ class IntegrationServiceInputGroupController extends Controller
             return ApiResponse::error('Input group not found.', 404);
         }
 
-        $this->groupRepo->delete($id);
+        $this->deleteGroupRecursive($id, $serviceId);
 
-        return ApiResponse::success(null, 'Input group deleted successfully.');
+        return ApiResponse::success(null, 'Input group and all nested groups deleted successfully.');
     }
 
-    // ── Private: Create group + inputs recursively ─────────────────────────────
+    // ── Recursive: Create ──────────────────────────────────────────────────────
 
     private function createGroupRecursive(array $groupData, int $serviceId): array
     {
-        $maxOrder = \App\Models\IntegrationServiceInputGroup::where('integration_service_id', $serviceId)
+        $maxOrder = IntegrationServiceInputGroup::where('integration_service_id', $serviceId)
             ->max('order') ?? 0;
 
-        // 1. Create the group
         $group = $this->groupRepo->create([
             'integration_service_id' => $serviceId,
             'key_name'               => $groupData['key_name'],
@@ -129,16 +131,13 @@ class IntegrationServiceInputGroupController extends Controller
             'order'                  => $maxOrder + 1,
         ]);
 
-        $inputs  = [];
-        $nested  = [];
+        $inputs = [];
+        $nested = [];
 
         foreach ($groupData['inputs'] ?? [] as $index => $inputData) {
 
-            // Nested group → recurse first, then save an input row as a reference
             if (($inputData['field_type'] ?? '') === 'group' && ! empty($inputData['group'])) {
-                $nestedResult = $this->createGroupRecursive($inputData['group'], $serviceId);
-
-                // Save input row referencing the nested group
+                $nestedResult  = $this->createGroupRecursive($inputData['group'], $serviceId);
                 $nestedGroupId = $nestedResult['group']->resource->id ?? null;
 
                 $inputRow = $this->inputRepo->create([
@@ -160,7 +159,6 @@ class IntegrationServiceInputGroupController extends Controller
                 continue;
             }
 
-            // Regular input
             $inputs[] = $this->inputRepo->create(array_merge(
                 $this->filterInputData($inputData),
                 [
@@ -178,11 +176,10 @@ class IntegrationServiceInputGroupController extends Controller
         ];
     }
 
-    // ── Private: Update group + inputs recursively ─────────────────────────────
+    // ── Recursive: Update ──────────────────────────────────────────────────────
 
     private function updateGroupRecursive(array $groupData, int $serviceId): array
     {
-        // 1. Update the group itself
         $group = $this->groupRepo->update($groupData['id'], array_filter([
             'key_name'  => $groupData['key_name']  ?? null,
             'data_type' => $groupData['data_type'] ?? null,
@@ -193,19 +190,13 @@ class IntegrationServiceInputGroupController extends Controller
 
         foreach ($groupData['inputs'] ?? [] as $index => $inputData) {
 
-            // Nested group → recurse
             if (($inputData['field_type'] ?? '') === 'group' && ! empty($inputData['group'])) {
                 $nestedGroupData = $inputData['group'];
 
-                if (! empty($nestedGroupData['id'])) {
-                    // Update existing nested group
-                    $nestedResult = $this->updateGroupRecursive($nestedGroupData, $serviceId);
-                } else {
-                    // Create new nested group
-                    $nestedResult = $this->createGroupRecursive($nestedGroupData, $serviceId);
-                }
+                $nestedResult = ! empty($nestedGroupData['id'])
+                    ? $this->updateGroupRecursive($nestedGroupData, $serviceId)
+                    : $this->createGroupRecursive($nestedGroupData, $serviceId);
 
-                // Update or create the input row referencing this nested group
                 $nestedGroupId = $nestedResult['group']->resource->id ?? null;
 
                 if (! empty($inputData['id'])) {
@@ -213,7 +204,7 @@ class IntegrationServiceInputGroupController extends Controller
                     if ($inp) {
                         $this->inputRepo->update($inp->id, [
                             'parent_group_id' => $nestedGroupId,
-                            'key'             => $inputData['key'],
+                            'key'             => $inputData['key'] ?? $inp->key,
                             'order'           => $index + 1,
                         ]);
                     }
@@ -236,7 +227,6 @@ class IntegrationServiceInputGroupController extends Controller
             }
 
             if (! empty($inputData['id'])) {
-                // Update existing input
                 $inp = $this->inputRepo->find($inputData['id']);
                 if ($inp) {
                     $id = $inputData['id'];
@@ -244,7 +234,6 @@ class IntegrationServiceInputGroupController extends Controller
                     $inputs[] = $this->inputRepo->update($id, $this->filterInputData($inputData));
                 }
             } else {
-                // Create new input inside existing group
                 $inputs[] = $this->inputRepo->create(array_merge(
                     $this->filterInputData($inputData),
                     [
@@ -263,7 +252,29 @@ class IntegrationServiceInputGroupController extends Controller
         ];
     }
 
-    // ── Helper: filter only input columns ──────────────────────────────────────
+    // ── Recursive: Delete ──────────────────────────────────────────────────────
+
+    private function deleteGroupRecursive(int $groupId, int $serviceId): void
+    {
+        // 1. Get all inputs inside this group
+        $inputs = IntegrationServiceInput::where('group_id', $groupId)->get();
+
+        foreach ($inputs as $input) {
+            // 2. If input references a nested group → recurse into it first
+            if ($input->field_type === 'group' && $input->parent_group_id) {
+                $this->deleteGroupRecursive($input->parent_group_id, $serviceId);
+            }
+            // 3. Delete the input
+            $input->delete();
+        }
+
+        // 4. Delete the group itself
+        IntegrationServiceInputGroup::where('id', $groupId)
+            ->where('integration_service_id', $serviceId)
+            ->delete();
+    }
+
+    // ── Helper ─────────────────────────────────────────────────────────────────
 
     private function filterInputData(array $inputData): array
     {
@@ -272,7 +283,7 @@ class IntegrationServiceInputGroupController extends Controller
             fn($key) => in_array($key, [
                 'field_type', 'key', 'placeholder', 'type', 'key_type',
                 'validation', 'require_from', 'options', 'dynamic_service_id',
-                'date_format',
+                'date_format', 'label',
             ]),
             ARRAY_FILTER_USE_KEY
         );
