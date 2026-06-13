@@ -25,7 +25,6 @@ class IntegrationServiceInputGroupRepository implements IntegrationServiceInputG
                 }
             ])
             ->where('integration_service_id', $serviceId)
-            ->whereNull('parent_group_id')
             ->orderBy('order')
             ->get();
     }
