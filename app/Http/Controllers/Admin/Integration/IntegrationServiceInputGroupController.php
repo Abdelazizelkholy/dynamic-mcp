@@ -80,21 +80,37 @@ class IntegrationServiceInputGroupController extends Controller
         $inputs = [];
 
         foreach ($groupData['inputs'] ?? [] as $index => $inputData) {
+
             if ($inputData['field_type'] === 'group' && ! empty($inputData['group'])) {
-                $inputs[] = $this->createGroupRecursive($inputData['group'], $serviceId);
+                // ✅ recurse but still create an input row that references the nested group
+                $nestedResult = $this->createGroupRecursive($inputData['group'], $serviceId);
+
+                // also save the input row itself
+                $inputs[] = $this->inputRepo->create([
+                    'integration_service_id' => $serviceId,
+                    'group_id'               => $group->id,  // ← parent group
+                    'field_type'             => 'group',
+                    'key'                    => $inputData['key'],
+                    'key_type'               => $inputData['key_type'],
+                    'validation'             => $inputData['validation'],
+                    'require_from'           => $inputData['require_from'],
+                    'order'                  => $index + 1,
+                ]);
+
+                $inputs[] = $nestedResult;  // append nested result for response
                 continue;
             }
 
             $inputs[] = $this->inputRepo->create(array_merge($inputData, [
                 'integration_service_id' => $serviceId,
-                'group_id'               => $group->id,
+                'group_id'               => $group->id,  // ← $group is a Model here ✅
                 'order'                  => $index + 1,
             ]));
         }
 
         return [
             'group'  => new IntegrationServiceInputGroupResource($group),
-            'inputs' => IntegrationServiceInputResource::collection(collect($inputs)),
+            'inputs' => $inputs,
         ];
     }
 
