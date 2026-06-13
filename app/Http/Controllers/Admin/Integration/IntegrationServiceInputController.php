@@ -122,4 +122,21 @@ class IntegrationServiceInputController extends Controller
             201
         );
     }
+
+    // PUT /{id} — update single input
+    public function updateSingle(UpdateInputRequest $request, int $integrationId, int $serviceId, int $id): JsonResponse
+    {
+        $input = $this->repo->find($id);
+
+        if (! $input || $input->integration_service_id !== $serviceId) {
+            return ApiResponse::error('Input not found.', 404);
+        }
+
+        $updated = $this->repo->update($id, $request->validated());
+
+        return ApiResponse::success(
+            new IntegrationServiceInputResource($updated),
+            'Input updated successfully.'
+        );
+    }
 }

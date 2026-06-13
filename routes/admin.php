@@ -100,7 +100,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::delete('{id}', 'destroy')->middleware('permission:integration_delete');
             });
 
-        Route::prefix('{integrationId}/services')
+       /* Route::prefix('{integrationId}/services')
             ->controller(IntegrationServiceController::class)
             ->group(function () {
                 Route::get('/', 'index');
@@ -164,6 +164,74 @@ Route::middleware('auth:sanctum')->group(function () {
                     });
 
 
+            });*/
+
+
+        Route::prefix('{integrationId}/services')
+            ->group(function () {
+
+                Route::controller(IntegrationServiceController::class)->group(function () {
+                    Route::get('/',                      'index');
+                    Route::post('/',                     'store');
+                    Route::get('available-dependencies', 'availableDependencies');
+                    Route::get('{serviceId}',            'show');
+                    Route::put('{serviceId}',            'update');
+                    Route::delete('{serviceId}',         'destroy');
+                    Route::patch('{serviceId}/toggle',   'toggle');
+                });
+
+                // ── Params ──────────────────────────────────────────────────────
+                Route::prefix('{serviceId}/params')
+                    ->controller(IntegrationServiceParamController::class)
+                    ->group(function () {
+                        Route::get('/',        'index');
+                        Route::post('/',       'store');
+                        Route::post('reorder', 'reorder');
+                        Route::get('{id}',     'show');
+                        Route::put('{id}',     'update');
+                        Route::delete('{id}',  'destroy');
+                    });
+
+                // ── Headers ──────────────────────────────────────────────────────
+                Route::prefix('{serviceId}/headers')
+                    ->controller(IntegrationServiceHeaderController::class)
+                    ->group(function () {
+                        Route::get('/',             'index');
+                        Route::post('/',            'store');
+                        Route::put('/',             'update');
+                        Route::get('{id}',          'show');
+                        Route::delete('{id}',       'destroy');
+                        Route::patch('{id}/toggle', 'toggle');
+                    });
+
+                // ── Input Groups with-inputs ← BEFORE {serviceId}/input-groups/{id} ──
+                Route::post('{serviceId}/input-groups/with-inputs', [IntegrationServiceInputGroupController::class, 'storeWithInputs']);
+                Route::put('{serviceId}/input-groups/with-inputs',  [IntegrationServiceInputGroupController::class, 'updateWithInputs']);
+
+                // ── Input Groups ─────────────────────────────────────────────────
+                Route::prefix('{serviceId}/input-groups')
+                    ->controller(IntegrationServiceInputGroupController::class)
+                    ->group(function () {
+                        Route::get('/',       'index');
+                        Route::post('/',      'store');
+                        Route::get('{id}',    'show');
+                        Route::put('{id}',    'update');
+                        Route::delete('{id}', 'destroy');
+
+                        Route::post('{id}/inputs', [IntegrationServiceInputController::class, 'storeInGroup']);
+                    });
+
+                // ── Standalone Inputs ← PUT '/' BEFORE PUT '{id}' ────────────────
+                Route::prefix('{serviceId}/inputs')
+                    ->controller(IntegrationServiceInputController::class)
+                    ->group(function () {
+                        Route::get('/',       'index');
+                        Route::post('/',      'store');
+                        Route::put('/',       'update');   // ← array update بدون id
+                        Route::get('{id}',    'show');
+                        Route::put('{id}',    'updateSingle'); // ← single update بـ id
+                        Route::delete('{id}', 'destroy');
+                    });
             });
 
 
