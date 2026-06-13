@@ -23,8 +23,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('auth')->controller(AuthController::class)->group(function () {
-    Route::post('login',          'login');
-    Route::post('send-otp',       'sendOtp');
+    Route::post('login', 'login');
+    Route::post('send-otp', 'sendOtp');
     Route::post('reset-password', 'resetPassword');
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', 'logout');
@@ -41,10 +41,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ── Users ───────────────────────────────────────────────────────────────
     Route::prefix('users')->controller(UserController::class)->group(function () {
-        Route::get('/',       'index')->middleware('permission:user_read');
-        Route::post('/',      'store')->middleware('permission:user_create');
-        Route::get('{id}',    'show')->middleware('permission:user_read');
-        Route::put('{id}',    'update')->middleware('permission:user_update');
+        Route::get('/', 'index')->middleware('permission:user_read');
+        Route::post('/', 'store')->middleware('permission:user_create');
+        Route::get('{id}', 'show')->middleware('permission:user_read');
+        Route::put('{id}', 'update')->middleware('permission:user_update');
         Route::delete('{id}', 'destroy')->middleware('permission:user_delete');
     });
 
@@ -52,10 +52,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('integrations')->group(function () {
 
         Route::controller(IntegrationController::class)->group(function () {
-            Route::get('/',       'index')->middleware('permission:integration_read');
-            Route::post('/',      'store')->middleware('permission:integration_create');
-            Route::get('{id}',    'show')->middleware('permission:integration_read');
-            Route::put('{id}',    'update')->middleware('permission:integration_update');
+            Route::get('/', 'index')->middleware('permission:integration_read');
+            Route::post('/', 'store')->middleware('permission:integration_create');
+            Route::get('{id}', 'show')->middleware('permission:integration_read');
+            Route::put('{id}', 'update')->middleware('permission:integration_update');
             Route::delete('{id}', 'destroy')->middleware('permission:integration_delete');
             Route::put('{id}/change-status', 'changeStatus')->middleware('permission:integration_update');
         });
@@ -67,12 +67,12 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('flatten-response', AuthStepFlattenController::class);
 
                 Route::controller(IntegrationAuthStepController::class)->group(function () {
-                    Route::get('/',             'index');
-                    Route::post('/',            'store');
-                    Route::post('reorder',      'reorder');
-                    Route::get('{id}',          'show');     // ← this was catching "flatten-response"
-                    Route::put('{id}',          'update');
-                    Route::delete('{id}',       'destroy');
+                    Route::get('/', 'index');
+                    Route::post('/', 'store');
+                    Route::post('reorder', 'reorder');
+                    Route::get('{id}', 'show');     // ← this was catching "flatten-response"
+                    Route::put('{id}', 'update');
+                    Route::delete('{id}', 'destroy');
                     Route::patch('{id}/toggle', 'toggle');
                 });
 
@@ -82,67 +82,67 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('{integrationId}/headers')
             ->controller(IntegrationHeaderController::class)
             ->group(function () {
-                Route::get('/',             'index')  ->middleware('permission:integration_read');
-                Route::post('/',            'store')  ->middleware('permission:integration_create');
-                Route::get('{id}',          'show')   ->middleware('permission:integration_read');
-                Route::put('/',          'update') ->middleware('permission:integration_update');
-                Route::delete('{id}',       'destroy')->middleware('permission:integration_delete');
-                Route::patch('{id}/toggle', 'toggle') ->middleware('permission:integration_update');
+                Route::get('/', 'index')->middleware('permission:integration_read');
+                Route::post('/', 'store')->middleware('permission:integration_create');
+                Route::get('{id}', 'show')->middleware('permission:integration_read');
+                Route::put('/', 'update')->middleware('permission:integration_update');
+                Route::delete('{id}', 'destroy')->middleware('permission:integration_delete');
+                Route::patch('{id}/toggle', 'toggle')->middleware('permission:integration_update');
             });
 
 
         Route::prefix('{integrationId}/global-body')
             ->controller(IntegrationGlobalBodyController::class)
             ->group(function () {
-                Route::get('/',       'index')  ->middleware('permission:integration_read');
-                Route::post('/',      'store')  ->middleware('permission:integration_create');
-                Route::put('{id}',    'update') ->middleware('permission:integration_update'); // ← {id} added
+                Route::get('/', 'index')->middleware('permission:integration_read');
+                Route::post('/', 'store')->middleware('permission:integration_create');
+                Route::put('{id}', 'update')->middleware('permission:integration_update'); // ← {id} added
                 Route::delete('{id}', 'destroy')->middleware('permission:integration_delete');
             });
 
         Route::prefix('{integrationId}/services')
             ->controller(IntegrationServiceController::class)
             ->group(function () {
-                Route::get('/',                      'index');
-                Route::post('/',                     'store');
+                Route::get('/', 'index');
+                Route::post('/', 'store');
                 Route::get('available-dependencies', 'availableDependencies');
-                Route::get('{serviceId}',            'show');
-                Route::put('{serviceId}',            'update');
-                Route::delete('{serviceId}',         'destroy');
-                Route::patch('{serviceId}/toggle',   'toggle');
+                Route::get('{serviceId}', 'show');
+                Route::put('{serviceId}', 'update');
+                Route::delete('{serviceId}', 'destroy');
+                Route::patch('{serviceId}/toggle', 'toggle');
 
                 // ── Params — nested inside services ──────────────────────────────
                 Route::prefix('{serviceId}/params')
                     ->controller(IntegrationServiceParamController::class)
                     ->group(function () {
-                        Route::get('/',        'index');
-                        Route::post('/',       'store');
+                        Route::get('/', 'index');
+                        Route::post('/', 'store');
                         Route::post('reorder', 'reorder');
-                        Route::get('{id}',     'show');
-                        Route::put('{id}',     'update');
-                        Route::delete('{id}',  'destroy');
+                        Route::get('{id}', 'show');
+                        Route::put('{id}', 'update');
+                        Route::delete('{id}', 'destroy');
                     });
 
                 Route::prefix('{serviceId}/headers')
-    ->controller(IntegrationServiceHeaderController::class)
-    ->group(function () {
-        Route::get('/',             'index');
-        Route::post('/',            'store');
-        Route::put('/',             'update');   // ← no {id}
-        Route::get('{id}',          'show');
-        Route::delete('{id}',       'destroy');
-        Route::patch('{id}/toggle', 'toggle');
-    });
+                    ->controller(IntegrationServiceHeaderController::class)
+                    ->group(function () {
+                        Route::get('/', 'index');
+                        Route::post('/', 'store');
+                        Route::put('/', 'update');   // ← no {id}
+                        Route::get('{id}', 'show');
+                        Route::delete('{id}', 'destroy');
+                        Route::patch('{id}/toggle', 'toggle');
+                    });
 
 
-                Route::post('{serviceId}/input-groups/with-inputs', [IntegrationServiceInputGroupController::class, 'storeWithInputs']);        
+                Route::post('{serviceId}/input-groups/with-inputs', [IntegrationServiceInputGroupController::class, 'storeWithInputs']);
 
 
                 Route::prefix('{serviceId}/input-groups')
                     ->controller(IntegrationServiceInputGroupController::class)
                     ->group(function () {
-                        Route::get('/',    'index');
-                        Route::post('/',   'store');
+                        Route::get('/', 'index');
+                        Route::post('/', 'store');
                         Route::get('{id}', 'show');
                         Route::put('{id}', 'update');
                         Route::delete('{id}', 'destroy');
@@ -155,16 +155,15 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::prefix('{serviceId}/inputs')
                     ->controller(IntegrationServiceInputController::class)
                     ->group(function () {
-                        Route::get('/',       'index');
-                        Route::post('/',      'store');
-                        Route::get('{id}',    'show');
-                        Route::put('{id}',    'update');
+                        Route::get('/', 'index');
+                        Route::post('/', 'store');
+                        Route::get('{id}', 'show');
+                        Route::put('{id}', 'update');
                         Route::delete('{id}', 'destroy');
                     });
 
 
             });
-
 
 
     });
