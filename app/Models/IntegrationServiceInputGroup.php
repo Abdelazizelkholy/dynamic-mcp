@@ -32,6 +32,12 @@ class IntegrationServiceInputGroup extends Model
         return $this->hasMany(IntegrationServiceInput::class, 'group_id')->orderBy('order');
     }
 
+    // Child groups inside this group
+    public function childGroups()
+    {
+        return $this->hasMany(IntegrationServiceInputGroup::class, 'parent_group_id')->orderBy('order');
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────────
 
     public function getDataTypeLabelAttribute(): string

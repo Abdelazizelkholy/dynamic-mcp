@@ -22,6 +22,9 @@ class IntegrationServiceInputGroupResource extends JsonResource
                 $this->whenLoaded('inputs')
             ),
 
+            'date_format'     => $this->date_format,
+            'parent_group_id' => $this->parent_group_id,
+
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];
