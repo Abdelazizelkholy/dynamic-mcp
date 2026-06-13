@@ -19,7 +19,6 @@ class IntegrationServiceInputGroupRepository implements IntegrationServiceInputG
             ->with([
                 'inputs' => function ($q) {
                     $q->with([
-                        'inputs',
                         'dynamicService:id,service_name_en,service_name_ar'
                     ])->orderBy('order');
                 }
