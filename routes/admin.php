@@ -226,7 +226,7 @@ Route::middleware('auth:sanctum')->group(function () {
                     ->controller(IntegrationServiceInputController::class)
                     ->group(function () {
                         Route::get('/',       'index');
-                        Route::post('/',      'store');
+                        Route::post('/',      'sync');
                         Route::put('/',       'update');   // ← array update بدون id
                         Route::get('{id}',    'show');
                         Route::put('{id}',    'updateSingle'); // ← single update بـ id

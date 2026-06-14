@@ -11,6 +11,7 @@ use App\Models\IntegrationServiceInput;
 use App\Models\IntegrationServiceInputGroup;
 use App\Repositories\IntegrationServiceInputRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class IntegrationServiceInputController extends Controller
 {
@@ -42,7 +43,7 @@ class IntegrationServiceInputController extends Controller
     }
 
     // POST /integrations/{integrationId}/services/{serviceId}/inputs
-    public function store(StoreInputRequest $request, int $integrationId, int $serviceId): JsonResponse
+    /*public function store(StoreInputRequest $request, int $integrationId, int $serviceId): JsonResponse
     {
         $created = [];
 
@@ -62,6 +63,37 @@ class IntegrationServiceInputController extends Controller
             IntegrationServiceInputResource::collection(collect($created)),
             'Inputs created successfully.',
             201
+        );
+    }*/
+
+    public function sync(
+        StoreInputRequest $request,
+        int $integrationId,
+        int $serviceId
+    ): JsonResponse {
+
+        DB::transaction(function () use ($serviceId, $request, &$created) {
+
+            IntegrationServiceInput::where(
+                'integration_service_id',
+                $serviceId
+            )->delete();
+
+            $created = [];
+
+            foreach ($request->validated('inputs') as $inputData) {
+
+                $created[] = $this->repo->create([
+                    ...$inputData,
+                    'integration_service_id' => $serviceId,
+                    'group_id' => null,
+                ]);
+            }
+        });
+
+        return ApiResponse::success(
+            IntegrationServiceInputResource::collection(collect($created)),
+            'Inputs synchronized successfully.'
         );
     }
 
