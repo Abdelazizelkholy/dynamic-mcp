@@ -9,6 +9,16 @@ class StoreGroupWithInputsRequest extends FormRequest
 {
     public function authorize(): bool { return true; }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->isJson()) {
+            $data = json_decode($this->getContent(), true);
+            if (is_array($data)) {
+                $this->merge($data);
+            }
+        }
+    }
+
     public function rules(): array
     {
         return [
@@ -23,12 +33,13 @@ class StoreGroupWithInputsRequest extends FormRequest
             'groups.*.inputs.*.key_type'           => ['nullable', 'in:body,headers'],
             'groups.*.inputs.*.validation'         => ['nullable', 'in:required,nullable'],
             'groups.*.inputs.*.require_from'       => ['nullable', 'in:admin,user,front,response,user_integration,dependency_service'],
+            'groups.*.inputs.*.label'              => ['nullable', 'string', 'max:255'],
             'groups.*.inputs.*.options'            => ['nullable', 'array'],
             'groups.*.inputs.*.options.*'          => ['string'],
             'groups.*.inputs.*.dynamic_service_id' => ['nullable', 'integer', 'exists:integration_services,id'],
             'groups.*.inputs.*.date_format'        => ['nullable', 'string', 'max:50'],
 
-            // Nested group
+            // Nested group — directly without wrapper
             'groups.*.inputs.*.group'              => ['nullable', 'array'],
             'groups.*.inputs.*.group.key_name'     => ['nullable', 'string'],
             'groups.*.inputs.*.group.data_type'    => ['nullable', 'in:object,array_of_objects,array'],
@@ -36,18 +47,19 @@ class StoreGroupWithInputsRequest extends FormRequest
         ];
     }
 
-    // ✅ استخدم afterValidation بدل withValidator
     public function after(): array
     {
         return [
             function (Validator $validator) {
                 foreach ($this->input('groups', []) as $gIndex => $group) {
                     foreach ($group['inputs'] ?? [] as $iIndex => $input) {
-                        $ft = $input['field_type'] ?? '';
 
-                        // Skip nested groups
+                        // Nested group — skip field_type checks
                         if (! empty($input['group'])) continue;
 
+                        $ft = $input['field_type'] ?? '';
+
+                        // Required fields for regular inputs
                         if (empty($ft) || empty($input['key']) || empty($input['key_type'])) {
                             $validator->errors()->add(
                                 "groups.{$gIndex}.inputs.{$iIndex}.field_type",
