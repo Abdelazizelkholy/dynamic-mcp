@@ -15,6 +15,7 @@ use App\Models\IntegrationServiceInputGroup;
 use App\Repositories\IntegrationServiceInputGroupRepositoryInterface;
 use App\Repositories\IntegrationServiceInputRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Request;
 
 class IntegrationServiceInputGroupController extends Controller
 {
@@ -62,9 +63,9 @@ class IntegrationServiceInputGroupController extends Controller
     }
 
     // POST /integrations/{integrationId}/services/{serviceId}/input-groups/with-inputs
-    public function storeWithInputs(StoreGroupWithInputsRequest $request, int $integrationId, int $serviceId): JsonResponse
+    public function storeWithInputs(Request $request, int $integrationId, int $serviceId): JsonResponse
     {
-
+        dd($request->all());
         // 1. Delete all existing groups and inputs for this service
         $existingGroups = IntegrationServiceInputGroup::where('integration_service_id', $serviceId)->get();
 
