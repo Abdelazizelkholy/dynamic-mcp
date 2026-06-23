@@ -16,6 +16,7 @@ use App\Repositories\IntegrationServiceInputGroupRepositoryInterface;
 use App\Repositories\IntegrationServiceInputRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class IntegrationServiceInputGroupController extends Controller
@@ -88,17 +89,9 @@ class IntegrationServiceInputGroupController extends Controller
 
     public function storeWithInputs(Request $request, int $integrationId, int $serviceId): JsonResponse
     {
-        // Parse JSON manually
-      //  $data = json_decode($request->getContent(), true) ?? $request->all();
+        $data = $request->all();
 
-        $content = file_get_contents('php://input');
-        $data = json_decode($content, true) ?? [];
-        dd($data);
-
-
-
-        // Validate manually
-        $validator = \Illuminate\Support\Facades\Validator::make($data, [
+        $validator = Validator::make($data, [
             'groups'                               => ['required', 'array', 'min:1'],
             'groups.*.key_name'                    => ['required', 'string', 'max:255'],
             'groups.*.data_type'                   => ['required', 'in:object,array_of_objects,array'],
@@ -127,18 +120,19 @@ class IntegrationServiceInputGroupController extends Controller
 
         $groups = $data['groups'];
 
-        // 1. Delete all existing
-        $existingGroups = IntegrationServiceInputGroup::where('integration_service_id', $serviceId)->get();
-        foreach ($existingGroups as $group) {
-            $this->deleteGroupRecursive($group->id, $serviceId);
-        }
-        IntegrationServiceInput::where('integration_service_id', $serviceId)->delete();
+        DB::transaction(function () use ($serviceId, $groups, &$result) {
+            $existingGroups = IntegrationServiceInputGroup::where('integration_service_id', $serviceId)->get();
+            foreach ($existingGroups as $group) {
+                $this->deleteGroupRecursive($group->id, $serviceId);
+            }
+            IntegrationServiceInput::where('integration_service_id', $serviceId)->delete();
 
-        // 2. Insert fresh
-        $result = [];
-        foreach ($groups as $groupData) {
-            $result[] = $this->createGroupRecursive($groupData, $serviceId);
-        }
+            // 2. Insert fresh
+            $result = [];
+            foreach ($groups as $groupData) {
+                $result[] = $this->createGroupRecursive($groupData, $serviceId);
+            }
+        });
 
         return ApiResponse::success($result, 'Groups with inputs saved successfully.', 201);
     }
