@@ -11,6 +11,7 @@ use App\Repositories\Eloquent\IntegrationServiceInputGroupRepository;
 use App\Repositories\Eloquent\IntegrationServiceInputRepository;
 use App\Repositories\Eloquent\IntegrationServiceParamRepository;
 use App\Repositories\Eloquent\IntegrationServiceRepository;
+use App\Repositories\Eloquent\IntegrationServiceResponseRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\IntegrationAuthStepRepositoryInterface;
 use App\Repositories\IntegrationGlobalBodyRepositoryInterface;
@@ -21,6 +22,7 @@ use App\Repositories\IntegrationServiceInputGroupRepositoryInterface;
 use App\Repositories\IntegrationServiceInputRepositoryInterface;
 use App\Repositories\IntegrationServiceParamRepositoryInterface;
 use App\Repositories\IntegrationServiceRepositoryInterface;
+use App\Repositories\IntegrationServiceResponseRepositoryInterface;
 use App\Repositories\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
@@ -41,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IntegrationServiceInputGroupRepositoryInterface::class, IntegrationServiceInputGroupRepository::class);
         $this->app->bind(IntegrationServiceInputRepositoryInterface::class,     IntegrationServiceInputRepository::class);
         $this->app->bind(IntegrationGlobalBodyRepositoryInterface::class,        IntegrationGlobalBodyRepository::class);
+        $this->app->bind(IntegrationServiceResponseRepositoryInterface::class, IntegrationServiceResponseRepository::class);
+
 
     }
 
