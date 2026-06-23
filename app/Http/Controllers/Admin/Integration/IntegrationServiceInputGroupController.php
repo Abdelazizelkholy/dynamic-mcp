@@ -62,7 +62,7 @@ class IntegrationServiceInputGroupController extends Controller
     }
 
     // POST /integrations/{integrationId}/services/{serviceId}/input-groups/with-inputs
-    public function storeWithInputs(StoreGroupWithInputsRequest $request, int $integrationId, int $serviceId): JsonResponse
+    /*public function storeWithInputs(StoreGroupWithInputsRequest $request, int $integrationId, int $serviceId): JsonResponse
     {
         // 1. Delete all existing groups and inputs for this service
         $existingGroups = IntegrationServiceInputGroup::where('integration_service_id', $serviceId)->get();
@@ -78,6 +78,57 @@ class IntegrationServiceInputGroupController extends Controller
         $result = [];
 
         foreach ($request->input('groups', []) as $groupData) {
+            $result[] = $this->createGroupRecursive($groupData, $serviceId);
+        }
+
+        return ApiResponse::success($result, 'Groups with inputs saved successfully.', 201);
+    }*/
+
+    public function storeWithInputs(Request $request, int $integrationId, int $serviceId): JsonResponse
+    {
+        // Parse JSON manually
+        $data = json_decode($request->getContent(), true) ?? $request->all();
+
+        // Validate manually
+        $validator = \Illuminate\Support\Facades\Validator::make($data, [
+            'groups'                               => ['required', 'array', 'min:1'],
+            'groups.*.key_name'                    => ['required', 'string', 'max:255'],
+            'groups.*.data_type'                   => ['required', 'in:object,array_of_objects,array'],
+            'groups.*.inputs'                      => ['nullable', 'array'],
+            'groups.*.inputs.*.field_type'         => ['nullable', 'in:input,select,dynamic_select,boolean,group,file,file_url,files,files_url,date,datetime'],
+            'groups.*.inputs.*.key'                => ['nullable', 'string', 'max:255'],
+            'groups.*.inputs.*.placeholder'        => ['nullable', 'string'],
+            'groups.*.inputs.*.type'               => ['nullable', 'in:params,input'],
+            'groups.*.inputs.*.key_type'           => ['nullable', 'in:body,headers'],
+            'groups.*.inputs.*.validation'         => ['nullable', 'in:required,nullable'],
+            'groups.*.inputs.*.require_from'       => ['nullable', 'in:admin,user,front,response,user_integration,dependency_service'],
+            'groups.*.inputs.*.label'              => ['nullable', 'string', 'max:255'],
+            'groups.*.inputs.*.options'            => ['nullable', 'array'],
+            'groups.*.inputs.*.options.*'          => ['string'],
+            'groups.*.inputs.*.dynamic_service_id' => ['nullable', 'integer', 'exists:integration_services,id'],
+            'groups.*.inputs.*.date_format'        => ['nullable', 'string', 'max:50'],
+            'groups.*.inputs.*.group'              => ['nullable', 'array'],
+            'groups.*.inputs.*.group.key_name'     => ['nullable', 'string'],
+            'groups.*.inputs.*.group.data_type'    => ['nullable', 'in:object,array_of_objects,array'],
+            'groups.*.inputs.*.group.inputs'       => ['nullable', 'array'],
+        ]);
+
+        if ($validator->fails()) {
+            return ApiResponse::error($validator->errors(), 422);
+        }
+
+        $groups = $data['groups'];
+
+        // 1. Delete all existing
+        $existingGroups = IntegrationServiceInputGroup::where('integration_service_id', $serviceId)->get();
+        foreach ($existingGroups as $group) {
+            $this->deleteGroupRecursive($group->id, $serviceId);
+        }
+        IntegrationServiceInput::where('integration_service_id', $serviceId)->delete();
+
+        // 2. Insert fresh
+        $result = [];
+        foreach ($groups as $groupData) {
             $result[] = $this->createGroupRecursive($groupData, $serviceId);
         }
 
