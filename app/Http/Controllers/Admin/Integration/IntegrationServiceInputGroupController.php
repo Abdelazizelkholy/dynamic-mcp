@@ -211,8 +211,8 @@ class IntegrationServiceInputGroupController extends Controller
                     'field_type'             => 'group',
                     'key'                    => $inputData['key'] ?? $inputData['group']['key_name'] ?? null,
                     'key_type'               => $inputData['key_type'] ?? 'body',
-                    'validation'             => $inputData['validation'] ?? null,
-                    'require_from'           => $inputData['require_from'] ?? null,
+                    'validation'             => $inputData['validation'] ?? 'required',
+                    'require_from'           => $inputData['require_from'] ?? 'user',
                     'order'                  => $index + 1,
                 ]);
 
