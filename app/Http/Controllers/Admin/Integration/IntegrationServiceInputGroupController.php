@@ -15,7 +15,7 @@ use App\Models\IntegrationServiceInputGroup;
 use App\Repositories\IntegrationServiceInputGroupRepositoryInterface;
 use App\Repositories\IntegrationServiceInputRepositoryInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 class IntegrationServiceInputGroupController extends Controller
 {
