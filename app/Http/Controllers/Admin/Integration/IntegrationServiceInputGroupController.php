@@ -89,7 +89,11 @@ class IntegrationServiceInputGroupController extends Controller
     public function storeWithInputs(Request $request, int $integrationId, int $serviceId): JsonResponse
     {
         // Parse JSON manually
-        $data = json_decode($request->getContent(), true) ?? $request->all();
+      //  $data = json_decode($request->getContent(), true) ?? $request->all();
+
+        $content = file_get_contents('php://input');
+        $data = json_decode($content, true) ?? [];
+        dd($data);
 
 
 
