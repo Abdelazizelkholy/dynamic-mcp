@@ -29,12 +29,19 @@ class IntegrationServiceInputGroupController extends Controller
     // GET /integrations/{integrationId}/services/{serviceId}/input-groups
     public function index(int $integrationId, int $serviceId): JsonResponse
     {
-        $groups = $this->groupRepo->allByService($serviceId);
+        $nestedGroupIds = IntegrationServiceInput::where('integration_service_id', $serviceId)
+            ->whereNotNull('parent_group_id')
+            ->pluck('parent_group_id')
+            ->unique()
+            ->toArray();
 
-        return ApiResponse::success(
-            IntegrationServiceInputGroupResource::collection($groups),
-            'Input groups retrieved successfully.'
-        );
+        $result = $this->groupRepo->allByService($serviceId)
+            ->filter(fn($g) => ! in_array($g->id, $nestedGroupIds))
+            ->values()
+            ->map(fn($g) => $this->buildGroupStructure($g))
+            ->all();
+
+        return ApiResponse::success($result, 'Input groups retrieved successfully.');
     }
 
     // GET /integrations/{integrationId}/services/{serviceId}/input-groups/{id}
@@ -179,6 +186,34 @@ class IntegrationServiceInputGroupController extends Controller
         $this->deleteGroupRecursive($id, $serviceId);
 
         return ApiResponse::success(null, 'Input group and all nested groups deleted successfully.');
+    }
+
+    // ── Recursive: Read ───────────────────────────────────────────────────────
+
+    private function buildGroupStructure(IntegrationServiceInputGroup $group): array
+    {
+        $regular      = [];
+        $nestedGroups = [];
+
+        foreach ($this->inputRepo->byGroup($group->id) as $input) {
+            if ($input->field_type === 'group' && $input->parent_group_id) {
+                $nestedGroup = $this->groupRepo->find($input->parent_group_id);
+                if ($nestedGroup) {
+                    $nestedGroups[] = [
+                        'input'        => new IntegrationServiceInputResource($input),
+                        'nested_group' => $this->buildGroupStructure($nestedGroup),
+                    ];
+                }
+            } else {
+                $regular[] = new IntegrationServiceInputResource($input);
+            }
+        }
+
+        return [
+            'group'         => new IntegrationServiceInputGroupResource($group),
+            'inputs'        => $regular,
+            'nested_groups' => $nestedGroups,
+        ];
     }
 
     // ── Recursive: Create ──────────────────────────────────────────────────────
