@@ -195,7 +195,11 @@ class IntegrationServiceInputGroupController extends Controller
         $regular      = [];
         $nestedGroups = [];
 
-        foreach ($this->inputRepo->byGroup($group->id) as $input) {
+        $inputs = $group->relationLoaded('inputs')
+            ? $group->inputs
+            : $this->inputRepo->byGroup($group->id);
+
+        foreach ($inputs as $input) {
             if ($input->field_type === 'group' && $input->parent_group_id) {
                 $nestedGroup = $this->groupRepo->find($input->parent_group_id);
                 if ($nestedGroup) {
