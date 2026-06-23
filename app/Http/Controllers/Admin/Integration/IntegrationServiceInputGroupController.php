@@ -91,6 +91,9 @@ class IntegrationServiceInputGroupController extends Controller
         // Parse JSON manually
         $data = json_decode($request->getContent(), true) ?? $request->all();
 
+
+        dd($data, $request->getContent(), $request->headers->all());
+
         // Validate manually
         $validator = \Illuminate\Support\Facades\Validator::make($data, [
             'groups'                               => ['required', 'array', 'min:1'],
