@@ -209,10 +209,10 @@ class IntegrationServiceInputGroupController extends Controller
                     'group_id'               => $group->id,
                     'parent_group_id'        => $nestedGroupId,
                     'field_type'             => 'group',
-                    'key'                    => $inputData['key'],
-                    'key_type'               => $inputData['key_type'],
-                    'validation'             => $inputData['validation'],
-                    'require_from'           => $inputData['require_from'],
+                    'key'                    => $inputData['key'] ?? $inputData['group']['key_name'] ?? null,
+                    'key_type'               => $inputData['key_type'] ?? null,
+                    'validation'             => $inputData['validation'] ?? null,
+                    'require_from'           => $inputData['require_from'] ?? null,
                     'order'                  => $index + 1,
                 ]);
 
