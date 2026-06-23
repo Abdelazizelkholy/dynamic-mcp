@@ -64,6 +64,8 @@ class IntegrationServiceInputGroupController extends Controller
     // POST /integrations/{integrationId}/services/{serviceId}/input-groups/with-inputs
     public function storeWithInputs(StoreGroupWithInputsRequest $request, int $integrationId, int $serviceId): JsonResponse
     {
+
+        dd($request->all());
         // 1. Delete all existing groups and inputs for this service
         $existingGroups = IntegrationServiceInputGroup::where('integration_service_id', $serviceId)->get();
 
