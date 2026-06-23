@@ -89,8 +89,6 @@ class IntegrationServiceInputGroupController extends Controller
 
     public function storeWithInputs(Request $request, int $integrationId, int $serviceId): JsonResponse
     {
-        return response()->json(['received' => $request->all(), 'json' => $request->json()->all(), 'content' => $request->getContent()]);
-
         $data = $request->json()->all() ?: $request->all();
 
         $validator = Validator::make($data, [
