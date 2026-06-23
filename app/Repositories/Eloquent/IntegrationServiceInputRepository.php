@@ -65,4 +65,5 @@ public function find(int $id): ?IntegrationServiceInput
     {
         return $this->model->findOrFail($id)->delete();
     }
+
 }

@@ -64,13 +64,24 @@ class IntegrationServiceInputGroupController extends Controller
     // POST /integrations/{integrationId}/services/{serviceId}/input-groups/with-inputs
     public function storeWithInputs(StoreGroupWithInputsRequest $request, int $integrationId, int $serviceId): JsonResponse
     {
+        // 1. Delete all existing groups and inputs for this service
+        $existingGroups = IntegrationServiceInputGroup::where('integration_service_id', $serviceId)->get();
+
+        foreach ($existingGroups as $group) {
+            $this->deleteGroupRecursive($group->id, $serviceId);
+        }
+
+        // Also delete any remaining standalone inputs
+        IntegrationServiceInput::where('integration_service_id', $serviceId)->delete();
+
+        // 2. Insert fresh
         $result = [];
 
         foreach ($request->validated('groups') as $groupData) {
             $result[] = $this->createGroupRecursive($groupData, $serviceId);
         }
 
-        return ApiResponse::success($result, 'Groups with inputs created successfully.', 201);
+        return ApiResponse::success($result, 'Groups with inputs saved successfully.', 201);
     }
 
     // PUT /integrations/{integrationId}/services/{serviceId}/input-groups/with-inputs
