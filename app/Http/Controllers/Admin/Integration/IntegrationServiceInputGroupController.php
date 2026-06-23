@@ -200,7 +200,7 @@ class IntegrationServiceInputGroupController extends Controller
 
         foreach ($groupData['inputs'] ?? [] as $index => $inputData) {
 
-            if (($inputData['field_type'] ?? '') === 'group' && ! empty($inputData['group'])) {
+            if (! empty($inputData['group'])) {
                 $nestedResult  = $this->createGroupRecursive($inputData['group'], $serviceId);
                 $nestedGroupId = $nestedResult['group']->resource->id ?? null;
 
@@ -254,7 +254,7 @@ class IntegrationServiceInputGroupController extends Controller
 
         foreach ($groupData['inputs'] ?? [] as $index => $inputData) {
 
-            if (($inputData['field_type'] ?? '') === 'group' && ! empty($inputData['group'])) {
+            if (! empty($inputData['group'])) {
                 $nestedGroupData = $inputData['group'];
 
                 $nestedResult = ! empty($nestedGroupData['id'])
