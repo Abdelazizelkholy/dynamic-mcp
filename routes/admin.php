@@ -205,8 +205,8 @@ Route::middleware('auth:sanctum')->group(function () {
                     });
 
                 // ── Input Groups with-inputs ← BEFORE {serviceId}/input-groups/{id} ──
-                Route::post('{serviceId}/input-groups/with-inputs', [IntegrationServiceInputGroupController::class, 'storeWithInputs']);
-                Route::put('{serviceId}/input-groups/with-inputs',  [IntegrationServiceInputGroupController::class, 'updateWithInputs']);
+            //    Route::post('{serviceId}/input-groups/with-inputs', [IntegrationServiceInputGroupController::class, 'storeWithInputs']);
+           //     Route::put('{serviceId}/input-groups/with-inputs',  [IntegrationServiceInputGroupController::class, 'updateWithInputs']);
 
                 // ── Input Groups ─────────────────────────────────────────────────
                 Route::prefix('{serviceId}/input-groups')
@@ -214,6 +214,11 @@ Route::middleware('auth:sanctum')->group(function () {
                     ->group(function () {
                         Route::get('/',       'index');
                         Route::post('/',      'store');
+
+
+                        Route::post('with-inputs', 'storeWithInputs');
+                        Route::put('with-inputs',  'updateWithInputs');
+
                         Route::get('{id}',    'show');
                         Route::put('{id}',    'update');
                         Route::delete('{id}', 'destroy');
