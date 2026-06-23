@@ -214,7 +214,7 @@ class IntegrationServiceInputGroupController extends Controller
         }
 
         return [
-            'group'         => new IntegrationServiceInputGroupResource($group),
+            'group'         => new IntegrationServiceInputGroupResource($group->unsetRelation('inputs')),
             'inputs'        => $regular,
             'nested_groups' => $nestedGroups,
         ];
