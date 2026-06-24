@@ -25,9 +25,10 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('integration_service_id')
                 ->constrained('integration_services')
-                ->cascadeOnDelete();
+                ->onDelete('cascade')
+                ->name('isr_views_service_id_foreign'); // ← short name
 
-            $table->string('key');                                  // e.g. data.*.id
+            $table->string('key');
             $table->enum('data_type', ['text', 'file'])->default('text');
             $table->unsignedInteger('order')->default(0);
             $table->timestamps();
