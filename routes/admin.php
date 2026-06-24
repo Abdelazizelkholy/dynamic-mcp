@@ -248,15 +248,19 @@ Route::middleware('auth:sanctum')->group(function () {
                         Route::put('filter-keys',  'updateFilterKeys');
                         Route::get('flatten',      'flatten');
                     });
+
+
+                Route::prefix('{serviceId}/response-view')
+                    ->controller(IntegrationServiceResponseViewController::class)
+                    ->group(function () {
+                        Route::get('/',  'index');
+                        Route::post('/', 'store');    // delete all + insert fresh
+                        Route::delete('/', 'destroy');
+                    });
+
             });
 
-        Route::prefix('{serviceId}/response-view')
-            ->controller(IntegrationServiceResponseViewController::class)
-            ->group(function () {
-                Route::get('/',  'index');
-                Route::post('/', 'store');    // delete all + insert fresh
-                Route::delete('/', 'destroy');
-            });
+
 
 
     });
