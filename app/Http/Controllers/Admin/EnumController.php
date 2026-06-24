@@ -131,6 +131,11 @@ class EnumController extends Controller
                 ['key' => 'array_of_objects', 'label' => 'Array of Object'],
             ],
 
+            'response_view_data_types' => [
+                ['key' => 'text', 'label' => 'Text'],
+                ['key' => 'file', 'label' => 'File'],
+            ],
+
 
         ], 'Enums retrieved successfully.');
     }

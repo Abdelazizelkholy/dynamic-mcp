@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\Integration\IntegrationServiceInputController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceInputGroupController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceParamController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceResponseController;
+use App\Http\Controllers\Admin\Integration\IntegrationServiceResponseViewController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\Integration\IntegrationController;
 use App\Http\Controllers\Admin\Integration\IntegrationAuthStepController;
@@ -247,6 +248,14 @@ Route::middleware('auth:sanctum')->group(function () {
                         Route::put('filter-keys',  'updateFilterKeys');
                         Route::get('flatten',      'flatten');
                     });
+            });
+
+        Route::prefix('{serviceId}/response-view')
+            ->controller(IntegrationServiceResponseViewController::class)
+            ->group(function () {
+                Route::get('/',  'index');
+                Route::post('/', 'store');    // delete all + insert fresh
+                Route::delete('/', 'destroy');
             });
 
 
