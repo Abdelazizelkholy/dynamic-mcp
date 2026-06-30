@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\EnumController;
 use App\Http\Controllers\Admin\Integration\AuthStepFlattenController;
+use App\Http\Controllers\Admin\Integration\IntegrationAccountSettingController;
 use App\Http\Controllers\Admin\Integration\IntegrationGlobalBodyController;
 use App\Http\Controllers\Admin\Integration\IntegrationHeaderController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceController;
@@ -102,71 +103,12 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::delete('{id}', 'destroy')->middleware('permission:integration_delete');
             });
 
-       /* Route::prefix('{integrationId}/services')
-            ->controller(IntegrationServiceController::class)
+        Route::prefix('{integrationId}/account-settings')
+            ->controller(IntegrationAccountSettingController::class)
             ->group(function () {
-                Route::get('/', 'index');
-                Route::post('/', 'store');
-                Route::get('available-dependencies', 'availableDependencies');
-                Route::get('{serviceId}', 'show');
-                Route::put('{serviceId}', 'update');
-                Route::delete('{serviceId}', 'destroy');
-                Route::patch('{serviceId}/toggle', 'toggle');
-
-                // ── Params — nested inside services ──────────────────────────────
-                Route::prefix('{serviceId}/params')
-                    ->controller(IntegrationServiceParamController::class)
-                    ->group(function () {
-                        Route::get('/', 'index');
-                        Route::post('/', 'store');
-                        Route::post('reorder', 'reorder');
-                        Route::get('{id}', 'show');
-                        Route::put('{id}', 'update');
-                        Route::delete('{id}', 'destroy');
-                    });
-
-                Route::prefix('{serviceId}/headers')
-                    ->controller(IntegrationServiceHeaderController::class)
-                    ->group(function () {
-                        Route::get('/', 'index');
-                        Route::post('/', 'store');
-                        Route::put('/', 'update');   // ← no {id}
-                        Route::get('{id}', 'show');
-                        Route::delete('{id}', 'destroy');
-                        Route::patch('{id}/toggle', 'toggle');
-                    });
-
-
-                Route::post('{serviceId}/input-groups/with-inputs', [IntegrationServiceInputGroupController::class, 'storeWithInputs']);
-                Route::put('{serviceId}/input-groups/with-inputs',        [IntegrationServiceInputGroupController::class,  'updateWithInputs']);
-
-
-                Route::prefix('{serviceId}/input-groups')
-                    ->controller(IntegrationServiceInputGroupController::class)
-                    ->group(function () {
-                        Route::get('/', 'index');
-                        Route::post('/', 'store');
-                        Route::get('{id}', 'show');
-                        Route::put('{id}', 'update');
-                        Route::delete('{id}', 'destroy');
-
-                        // Inputs inside a group
-                        Route::post('{id}/inputs', [IntegrationServiceInputController::class, 'storeInGroup']);
-                    });
-
-                // Standalone Inputs (not inside a group)
-                Route::prefix('{serviceId}/inputs')
-                    ->controller(IntegrationServiceInputController::class)
-                    ->group(function () {
-                        Route::get('/', 'index');
-                        Route::post('/', 'store');
-                        Route::get('{id}', 'show');
-                        Route::put('{id}', 'update');
-                        Route::delete('{id}', 'destroy');
-                    });
-
-
-            });*/
+                Route::get('/',  'show');
+                Route::put('/',  'update'); // تحديث أو إنشاء في حال عدم الوجود
+            });
 
 
         Route::prefix('{integrationId}/services')

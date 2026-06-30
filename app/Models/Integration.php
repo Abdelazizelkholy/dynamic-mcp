@@ -69,5 +69,10 @@ class Integration extends Model implements HasMedia
         return $this->hasMany(IntegrationService::class)->orderBy('order');
     }
 
+    public function accountSetting(): \Illuminate\Database\Eloquent\Relations\HasOne|Integration
+    {
+        return $this->hasOne(IntegrationAccountSetting::class);
+    }
+
 
 }
