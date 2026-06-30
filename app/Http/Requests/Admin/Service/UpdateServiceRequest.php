@@ -29,4 +29,14 @@ class UpdateServiceRequest extends FormRequest
             'dependency_service_ids.*' => ['integer', 'exists:integration_services,id'],
         ];
     }
+
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'is_enabled'             => filter_var($this->is_enabled, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $this->is_enabled,
+            'inherit_global_headers' => filter_var($this->inherit_global_headers, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $this->inherit_global_headers,
+            'long_term_execution'    => filter_var($this->long_term_execution, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $this->long_term_execution,
+        ]);
+    }
 }
