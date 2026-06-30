@@ -14,6 +14,7 @@ class IntegrationServiceHeaderResource extends JsonResource
             'integration_service_id' => $this->integration_service_id,
             'type' => $this->type,
             'type_label' => $this->type_label,
+            'concatenate_key' => $this->concatenate_key,
             'header_key' => $this->header_key,
             'require_from' => $this->require_from,
             'require_from_label' => $this->require_from_label,
