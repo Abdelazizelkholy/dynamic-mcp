@@ -50,10 +50,11 @@ class IntegrationServiceResource extends JsonResource
         }
 
         return \App\Models\IntegrationService::whereIn('id', $this->dependency_service_ids)
-            ->get(['id', 'service_name', 'http_method'])
+            ->get(['id', 'service_name_en', 'service_name_ar', 'http_method'])
             ->map(fn($s) => [
                 'id' => $s->id,
-                'service_name' => $s->service_name,
+                'service_name_en' => $s->service_name_en,
+                'service_name_ar' => $s->service_name_ar,
                 'http_method' => $s->http_method,
             ])
             ->toArray();
