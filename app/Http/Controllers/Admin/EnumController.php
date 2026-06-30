@@ -92,7 +92,7 @@ class EnumController extends Controller
                 ['key' => 'select',         'label' => 'Select'],
                 ['key' => 'dynamic_select', 'label' => 'Dynamic Select'],
                 ['key' => 'boolean',        'label' => 'Boolean'],
-                ['key' => 'group',          'label' => 'Group'],
+            //    ['key' => 'group',          'label' => 'Group'],
                 ['key' => 'file',           'label' => 'File'],
                 ['key' => 'file_url',       'label' => 'File URL'],
                 ['key' => 'files',          'label' => 'Multiple Files'],
