@@ -46,14 +46,14 @@ class IntegrationServiceParamController extends Controller
     // POST /admin/integrations/{integrationId}/services/{serviceId}/params
     public function store(StoreParamRequest $request, int $integrationId, int $serviceId): JsonResponse
     {
-        $param = $this->repo->create(array_merge(
-            $request->validated(),
-            ['integration_service_id' => $serviceId]
-        ));
+        $params = $this->repo->create([
+            'integration_service_id' => $serviceId,
+            'params'                 => $request->validated('params'),
+        ]);
 
         return ApiResponse::success(
-            new IntegrationServiceParamResource($param),
-            'Param created successfully.',
+            IntegrationServiceParamResource::collection($params),
+            'Params saved successfully.',
             201
         );
     }

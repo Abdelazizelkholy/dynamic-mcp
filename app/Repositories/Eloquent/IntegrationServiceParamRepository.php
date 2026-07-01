@@ -27,22 +27,24 @@ class IntegrationServiceParamRepository implements IntegrationServiceParamReposi
 
     // ── Write ──────────────────────────────────────────────────────────────────
 
-    public function create(array $data): IntegrationServiceParam
+    public function create(array $data): \Illuminate\Database\Eloquent\Collection
     {
-        $data['order'] = $this->model
-                ->where('integration_service_id', $data['integration_service_id'])
-                ->max('order') + 1;
+        // Delete all existing params for this service
+        $this->model->where('integration_service_id', $data['integration_service_id'])->delete();
 
-        return $this->model->create($data);
+        // Insert fresh — expecting array of params
+        foreach ($data['params'] as $index => $param) {
+            $this->model->create([
+                'integration_service_id' => $data['integration_service_id'],
+                'type'                   => $param['type'],
+                'value'                  => $param['value'],
+                'order'                  => $index + 1,
+            ]);
+        }
+
+        return $this->allByService($data['integration_service_id']);
     }
 
-    public function update(int $id, array $data): IntegrationServiceParam
-    {
-        $param = $this->model->findOrFail($id);
-        $param->update($data);
-
-        return $param->fresh();
-    }
 
     public function delete(int $id): bool
     {

@@ -11,8 +11,9 @@ class StoreParamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type'  => ['required', 'in:static,user_integration'],
-            'value' => ['required', 'string', 'max:500'],
+            'params'        => ['required', 'array'],
+            'params.*.type' => ['required', 'in:static,user_integration'],
+            'params.*.value'=> ['required', 'string', 'max:500'],
         ];
     }
 

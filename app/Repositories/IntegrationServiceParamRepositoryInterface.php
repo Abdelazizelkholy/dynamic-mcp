@@ -12,9 +12,7 @@ interface IntegrationServiceParamRepositoryInterface
 
     public function find(int $id): ?IntegrationServiceParam;
 
-    public function create(array $data): IntegrationServiceParam;
-
-    public function update(int $id, array $data): IntegrationServiceParam;
+    public function create(array $data): collection;
 
     public function delete(int $id): bool;
 
