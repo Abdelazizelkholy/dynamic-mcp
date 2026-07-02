@@ -70,4 +70,21 @@ class IntegrationService extends Model implements HasMedia
             'dependency_id'
         );
     }
+
+
+    // Inside App\Models\IntegrationService.php
+
+    public function standaloneInputs(): \Illuminate\Database\Eloquent\Relations\HasMany|IntegrationService
+    {
+        return $this->hasMany(IntegrationServiceInput::class, 'integration_service_id')
+            ->whereNull('group_id')
+            ->orderBy('order');
+    }
+
+    public function inputGroups(): \Illuminate\Database\Eloquent\Relations\HasMany|IntegrationService
+    {
+        return $this->hasMany(IntegrationServiceInputGroup::class, 'integration_service_id')
+            ->orderBy('order');
+    }
+
 }

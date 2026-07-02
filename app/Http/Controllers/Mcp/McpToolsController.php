@@ -94,17 +94,15 @@ class McpToolsController extends Controller
 
     // ── Build inputSchema ──────────────────────────────────────────────────────
 
+    // In App\Http\Controllers\Mcp\McpToolsController.php
+
     private function buildInputSchema(IntegrationService $service): array
     {
         $properties = [];
         $required   = [];
 
-        // 1. Standalone inputs
-        $standaloneInputs = IntegrationServiceInput::with('dynamicService')
-            ->where('integration_service_id', $service->id)
-            ->whereNull('group_id')
-            ->orderBy('order')
-            ->get();
+        // 1. Use the eager-loaded collection instead of running a new DB query
+        $standaloneInputs = $service->standaloneInputs;
 
         foreach ($standaloneInputs as $input) {
             [$key, $prop] = $this->buildInputProperty($input);
@@ -115,11 +113,8 @@ class McpToolsController extends Controller
             }
         }
 
-        // 2. Groups
-        $groups = IntegrationServiceInputGroup::with(['inputs.dynamicService'])
-            ->where('integration_service_id', $service->id)
-            ->orderBy('order')
-            ->get();
+        // 2. Use the eager-loaded collection here too
+        $groups = $service->inputGroups;
 
         foreach ($groups as $group) {
             $groupProp = $this->buildGroupProperty($group);
