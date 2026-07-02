@@ -30,6 +30,8 @@ class StoreInputRequest extends FormRequest
             'inputs.*.dynamic_service_id'  => ['nullable', 'integer', 'exists:integration_services,id'],
             'inputs.*.date_format'         => ['nullable', 'string', 'max:50'],     // ← nullable هنا
             'inputs.*.label'               => ['nullable', 'string', 'max:255'],
+            'inputs.*.filling_data'   => ['nullable', 'array'],
+            'inputs.*.filling_data.*' => ['integer', 'exists:integration_services,id'],
         ];
     }
 

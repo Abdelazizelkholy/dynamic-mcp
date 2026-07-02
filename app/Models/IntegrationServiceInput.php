@@ -24,11 +24,13 @@ class IntegrationServiceInput extends Model
         'dynamic_service_id',
         'date_format',
         'order',
+        'filling_data',
     ];
 
     protected $casts = [
         'options' => 'array',
         'order'   => 'integer',
+        'filling_data' => 'array',
     ];
 
     // ── Relations ──────────────────────────────────────────────────────────────

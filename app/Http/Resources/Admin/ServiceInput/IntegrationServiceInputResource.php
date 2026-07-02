@@ -28,6 +28,9 @@ class IntegrationServiceInputResource extends JsonResource
             // select
             'options' => $this->options ?? [],
 
+            'filling_data'    => $this->filling_data ?? [],
+            'filling_services'=> $this->formatFillingServices(),
+
             // dynamic_select
             'dynamic_service_id' => $this->dynamic_service_id,
             'dynamic_service' => $this->when(
@@ -43,4 +46,23 @@ class IntegrationServiceInputResource extends JsonResource
             'updated_at' => $this->updated_at?->toISOString(),
         ];
     }
+
+
+    private function formatFillingServices(): array
+    {
+        if (empty($this->filling_data)) {
+            return [];
+        }
+
+        return \App\Models\IntegrationService::whereIn('id', $this->filling_data)
+            ->get(['id', 'service_name_en', 'service_name_ar', 'http_method'])
+            ->map(fn($s) => [
+                'id'              => $s->id,
+                'service_name_en' => $s->service_name_en,
+                'service_name_ar' => $s->service_name_ar,
+                'http_method'     => $s->http_method,
+            ])
+            ->toArray();
+    }
+
 }

@@ -386,7 +386,7 @@ class IntegrationServiceInputGroupController extends Controller
             fn($key) => in_array($key, [
                 'field_type', 'key', 'placeholder', 'type', 'key_type',
                 'validation', 'require_from', 'options', 'dynamic_service_id',
-                'date_format', 'label',
+                'date_format', 'label', 'filling_data',
             ]),
             ARRAY_FILTER_USE_KEY
         );
