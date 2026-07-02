@@ -62,10 +62,14 @@ class McpToolsController extends Controller
                 '/'
             ) . 'McpToolsController.php/' . ltrim($service->endpoint_path, '/');
 
-        // Build params URL segments
-        $params = $service->params()->orderBy('order')->get();
-        if ($params->isNotEmpty()) {
-            $segments = $params->map(fn($p) => $p->type === 'static' ? $p->value : "[{$p->value}]")->implode('/');
+
+        $pathParams = $service->standaloneInputs
+            ->where('key_type', 'path')
+            ->sortBy('order');
+
+        if ($pathParams->isNotEmpty()) {
+
+            $segments = $pathParams->map(fn($p) => "[{$p->key}]")->implode('/');
             $baseUrl  = rtrim($baseUrl, '/') . 'McpToolsController.php/' . $segments;
         }
 
@@ -94,15 +98,13 @@ class McpToolsController extends Controller
 
     // ── Build inputSchema ──────────────────────────────────────────────────────
 
-    // In App\Http\Controllers\Mcp\McpToolsController.php
-
     private function buildInputSchema(IntegrationService $service): array
     {
         $properties = [];
         $required   = [];
 
-        // 1. Use the eager-loaded collection instead of running a new DB query
-        $standaloneInputs = $service->standaloneInputs;
+        // هنا نأخذ الـ inputs التي نوعها body أو query ونستثني الـ path لأنها أصبحت في الـ URL
+        $standaloneInputs = $service->standaloneInputs->where('key_type', '!=', 'path');
 
         foreach ($standaloneInputs as $input) {
             [$key, $prop] = $this->buildInputProperty($input);
@@ -113,7 +115,7 @@ class McpToolsController extends Controller
             }
         }
 
-        // 2. Use the eager-loaded collection here too
+        // 2. المجموعات المحملة مسبقاً
         $groups = $service->inputGroups;
 
         foreach ($groups as $group) {
