@@ -44,7 +44,7 @@ class SallaIntegrationSeeder extends Seeder
             'integration_id'    => $integration->id,
             'name'              => 'Generate Access Token',
             'step_type'         => 'login_callback',
-            'auth_type'         => 'bearer',
+            'auth_type'         => 'redirect',
             'http_method'       => 'POST',
             'base_endpoint_url' => 'https://accounts.salla.sa/oauth2/token',
             'inputs'            => [
@@ -115,7 +115,7 @@ class SallaIntegrationSeeder extends Seeder
             'field_type'             => 'input',
             'key'                    => 'first_name',
             'placeholder'            => 'John',
-            'type'                   => 'text',
+            'type'                   => 'body',
             'validation'             => 'required|string',
             'require_from'           => 'user',
             'order'                  => 1,
