@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,  // 1. create permissions first
             AdminUserSeeder::class,   // 2. create admin user + assign role
             IntegrationSeeder::class, // 3. seed integrations
+            SallaIntegrationSeeder::class,
         ]);
     }
 }
