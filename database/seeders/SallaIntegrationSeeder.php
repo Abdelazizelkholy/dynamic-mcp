@@ -43,7 +43,7 @@ class SallaIntegrationSeeder extends Seeder
         IntegrationAuthStep::create([
             'integration_id'    => $integration->id,
             'name'              => 'Generate Access Token',
-            'step_type'         => 'oauth2',
+            'step_type'         => 'login_callback',
             'auth_type'         => 'bearer',
             'http_method'       => 'POST',
             'base_endpoint_url' => 'https://accounts.salla.sa/oauth2/token',
