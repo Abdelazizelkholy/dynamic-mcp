@@ -247,7 +247,7 @@ class SallaIntegrationSeeder extends Seeder
             'key'                    => 'notes',
             'placeholder'            => 'Add custom order notes',
             'type'                   => 'input',
-            'validation'             => 'nullable|string',
+            'validation'             => 'nullable',
             'require_from'           => 'user',
             'order'                  => 2,
         ]);
@@ -298,7 +298,7 @@ class SallaIntegrationSeeder extends Seeder
             'key'                    => 'slug',
             'placeholder'            => 'delivering / completed',
             'type'                   => 'input',
-            'validation'             => 'required|string',
+            'validation'             => 'required',
             'require_from'           => 'user',
             'order'                  => 2,
         ]);
@@ -337,7 +337,7 @@ class SallaIntegrationSeeder extends Seeder
             'key'                    => 'name',
             'placeholder'            => 'Product Name',
             'type'                   => 'input',
-            'validation'             => 'required|string',
+            'validation'             => 'required',
             'require_from'           => 'user',
             'order'                  => 1,
         ]);
@@ -359,7 +359,7 @@ class SallaIntegrationSeeder extends Seeder
             'key'                    => 'quantity',
             'placeholder'            => '10',
             'type'                   => 'input',
-            'validation'             => 'required|integer',
+            'validation'             => 'required',
             'require_from'           => 'user',
             'order'                  => 3,
         ]);
