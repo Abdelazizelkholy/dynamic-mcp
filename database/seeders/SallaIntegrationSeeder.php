@@ -48,17 +48,39 @@ class SallaIntegrationSeeder extends Seeder
             'http_method'       => 'POST',
             'base_endpoint_url' => 'https://accounts.salla.sa/oauth2/token',
             'inputs'            => [
-                'code'          => 'string',
-                'client_id'     => 'string',
-                'client_secret' => 'string',
-                'redirect_uri'  => 'string',
-                'grant_type'    => 'authorization_code'
+                [
+                    'key'          => 'code',
+                    'label'        => 'Authorization Code',
+                    'type'         => 'body',
+                    'require_from' => 'front',
+                ],
+                [
+                    'key'          => 'client_id',
+                    'label'        => 'Client ID',
+                    'type'         => 'body',
+                    'require_from' => 'admin',
+                ],
+                [
+                    'key'          => 'client_secret',
+                    'label'        => 'Client Secret',
+                    'type'         => 'body',
+                    'require_from' => 'admin',
+                ],
+                [
+                    'key'          => 'redirect_uri',
+                    'label'        => 'Redirect URI',
+                    'type'         => 'body',
+                    'require_from' => 'admin',
+                ],
+                [
+                    'key'          => 'grant_type',
+                    'label'        => 'Grant Type',
+                    'type'         => 'body',
+                    'require_from' => 'admin',
+                    'value'        => 'authorization_code',
+                ],
             ],
-            'outputs'           => [
-                'access_token'  => 'access_token',
-                'refresh_token' => 'refresh_token',
-                'expires_in'    => 'expires_in'
-            ],
+            'outputs'           => ['access_token', 'refresh_token', 'expires_in'],
             'response_example'  => [
                 'access_token'  => 'eg_tok_12345abcde',
                 'expires_in'    => 2592000,
