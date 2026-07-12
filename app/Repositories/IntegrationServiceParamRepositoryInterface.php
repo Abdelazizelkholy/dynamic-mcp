@@ -14,6 +14,8 @@ interface IntegrationServiceParamRepositoryInterface
 
     public function create(array $data): collection;
 
+    public function update(int $id, array $data): IntegrationServiceParam;
+
     public function delete(int $id): bool;
 
     public function reorder(int $serviceId, array $orderedIds): bool;

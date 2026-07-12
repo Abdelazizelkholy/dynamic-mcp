@@ -21,7 +21,7 @@ class StoreInputRequest extends FormRequest
             'inputs.*.field_type'          => ['required', 'in:input,select,dynamic_select,boolean,group,file,file_url,files,files_url,date,datetime'],
             'inputs.*.key'                 => ['required', 'string', 'max:255'],
             'inputs.*.placeholder'         => ['nullable', 'string'],
-            'inputs.*.type'                => ['nullable', 'in:params,input'],      // ← nullable
+            'inputs.*.type'                => ['required', 'in:params,input'],
             'inputs.*.key_type'            => ['required', 'in:body,headers'],
             'inputs.*.validation'          => ['required', 'in:required,nullable'],
             'inputs.*.require_from'        => ['required', 'in:admin,user,front,response,user_integration,dependency_service'],

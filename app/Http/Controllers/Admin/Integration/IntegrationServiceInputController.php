@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\ServiceInput\UpdateInputRequest;
 use App\Http\Resources\Admin\ServiceInput\IntegrationServiceInputResource;
 use App\Models\IntegrationServiceInput;
 use App\Models\IntegrationServiceInputGroup;
+use App\Models\IntegrationServiceParam;
 use App\Repositories\IntegrationServiceInputRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -73,6 +74,12 @@ class IntegrationServiceInputController extends Controller
     ): JsonResponse {
 
         DB::transaction(function () use ($serviceId, $request, &$created) {
+
+            // Auto-linked params (type = params) are tied to inputs we're about to
+            // wipe below via a raw bulk delete, which doesn't fire model events.
+            IntegrationServiceParam::where('integration_service_id', $serviceId)
+                ->where('type', 'params')
+                ->delete();
 
             IntegrationServiceInput::where(
                 'integration_service_id',

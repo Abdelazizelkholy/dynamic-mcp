@@ -21,7 +21,7 @@ class UpdateInputRequest extends FormRequest
             'inputs.*.field_type'         => ['sometimes', 'in:input,select,dynamic_select,boolean,group,file,file_url,files,files_url'],
             'inputs.*.key'                => ['sometimes', 'string', 'max:255'],
             'inputs.*.placeholder'        => ['nullable', 'string'],
-            'inputs.*.type'               => ['nullable', 'in:text,number,email,password,url,date,textarea'],
+            'inputs.*.type'               => ['sometimes', 'in:params,input'],
             'inputs.*.key_type'           => ['sometimes', 'in:body,query,header,path'],
             'inputs.*.validation'         => ['sometimes', 'in:required,nullable,sometimes'],
             'inputs.*.require_from'       => ['sometimes', 'in:admin,user,front,user_integration,previous_step_response'],

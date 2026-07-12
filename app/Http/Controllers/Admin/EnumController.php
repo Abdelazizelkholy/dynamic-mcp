@@ -86,6 +86,12 @@ class EnumController extends Controller
                 ['key' => 'user_integration', 'label' => 'User Integration'],
             ],
 
+            'service_param_types' => [
+                ['key' => 'static',           'label' => 'Static'],
+                ['key' => 'user_integration', 'label' => 'User Integration'],
+                ['key' => 'params',           'label' => 'From Input'],
+            ],
+
 
             'input_field_types' => [
                 ['key' => 'input',          'label' => 'Text'],

@@ -33,6 +33,15 @@ class IntegrationServiceInput extends Model
         'filling_data' => 'array',
     ];
 
+    protected static function booted(): void
+    {
+        static::saved(fn (self $input) => $input->syncParam());
+
+        static::deleting(function (self $input) {
+            IntegrationServiceParam::where('input_id', $input->id)->delete();
+        });
+    }
+
     // ── Relations ──────────────────────────────────────────────────────────────
 
     public function service()
@@ -51,7 +60,36 @@ class IntegrationServiceInput extends Model
         return $this->belongsTo(IntegrationService::class, 'dynamic_service_id');
     }
 
+    public function param()
+    {
+        return $this->hasOne(IntegrationServiceParam::class, 'input_id');
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────────
+
+    /**
+     * Keeps integration_service_params in sync with this input's `type`.
+     * type = params → an IntegrationServiceParam row linked via input_id must exist.
+     * type != params → any previously auto-linked param row is removed.
+     */
+    public function syncParam(): void
+    {
+        if ($this->type !== 'params') {
+            IntegrationServiceParam::where('input_id', $this->id)->where('type', 'params')->delete();
+
+            return;
+        }
+
+        $param = IntegrationServiceParam::firstOrNew(['input_id' => $this->id]);
+        $param->integration_service_id = $this->integration_service_id;
+        $param->type = 'params';
+
+        if (! $param->exists) {
+            $param->order = IntegrationServiceParam::where('integration_service_id', $this->integration_service_id)->max('order') + 1;
+        }
+
+        $param->save();
+    }
 
     public function getFieldTypeLabelAttribute(): string
     {

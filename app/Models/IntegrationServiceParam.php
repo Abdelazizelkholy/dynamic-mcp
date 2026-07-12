@@ -11,6 +11,7 @@ class IntegrationServiceParam extends Model
 
     protected $fillable = [
         'integration_service_id',
+        'input_id',
         'type',
         'value',
         'order',
@@ -27,13 +28,19 @@ class IntegrationServiceParam extends Model
         return $this->belongsTo(IntegrationService::class, 'integration_service_id');
     }
 
+    public function input()
+    {
+        return $this->belongsTo(IntegrationServiceInput::class, 'input_id');
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────────
 
     public function getTypeLabelAttribute(): string
     {
         return match ($this->type) {
             'user_integration' => 'User Integration',
-            default            => 'Static',
+            'params'            => 'From Input',
+            default             => 'Static',
         };
     }
 
@@ -41,11 +48,14 @@ class IntegrationServiceParam extends Model
      * Returns the URL segment representation.
      * static           → "test"
      * user_integration → "[Authorization]"
+     * params           → "{key}" of the linked input
      */
     public function toUrlSegment(): string
     {
-        return $this->type === 'static'
-            ? $this->value
-            : "[{$this->value}]";
+        return match ($this->type) {
+            'static' => $this->value,
+            'params' => '{'.($this->input?->key ?? $this->value).'}',
+            default  => "[{$this->value}]",
+        };
     }
 }
