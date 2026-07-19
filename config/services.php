@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'salla' => [
+        'client_id'     => env('SALLA_CLIENT_ID'),
+        'client_secret' => env('SALLA_CLIENT_SECRET'),
+        'redirect_uri'  => env('SALLA_REDIRECT_URI'),
+    ],
+
 ];

@@ -39,12 +39,70 @@ class SallaIntegrationSeeder extends Seeder
             'order'          => 1,
         ]);
 
-        // 3. Auth Steps (Using fixed 'login_callback' step_type)
+        // 3. Auth Steps — real 3-step Salla OAuth2 flow (docs.salla.dev/421118m0)
+        //    1) redirect  -> https://accounts.salla.sa/oauth2/auth   (browser redirect, GET, query params)
+        //    2) call      -> https://accounts.salla.sa/oauth2/token  (exchange code, POST, body: grant_type=authorization_code)
+        //    3) call      -> https://accounts.salla.sa/oauth2/token  (refresh, POST, body: grant_type=refresh_code)
+        //    NOTE: response field is `expires` (seconds), not `expires_in`. Refresh tokens are single-use.
+
         IntegrationAuthStep::create([
             'integration_id'    => $integration->id,
-            'name'              => 'Generate Access Token',
+            'name'              => 'Redirect to Salla Authorization',
             'step_type'         => 'login_callback',
             'auth_type'         => 'redirect',
+            'http_method'       => 'GET',
+            'base_endpoint_url' => 'https://accounts.salla.sa/oauth2/auth',
+            'inputs'            => [
+                [
+                    'key'          => 'client_id',
+                    'label'        => 'Client ID',
+                    'type'         => 'params',
+                    'require_from' => 'user',
+                ],
+                [
+                    'key'          => 'client_secret',
+                    'label'        => 'Client Secret',
+                    'type'         => 'params',
+                    'require_from' => 'user',
+                ],
+                [
+                    'key'          => 'response_type',
+                    'label'        => 'Response Type',
+                    'type'         => 'params',
+                    'require_from' => 'admin',
+                    'value'        => 'code',
+                ],
+                [
+                    'key'          => 'redirect_uri',
+                    'label'        => 'Redirect URI',
+                    'type'         => 'params',
+                    'require_from' => 'user',
+                ],
+                [
+                    'key'          => 'scope',
+                    'label'        => 'Scope',
+                    'type'         => 'params',
+                    'require_from' => 'admin',
+                    'value'        => 'offline_access',
+                ],
+                [
+                    'key'          => 'state',
+                    'label'        => 'State (CSRF)',
+                    'type'         => 'params',
+                    'require_from' => 'front',
+                ],
+            ],
+            'outputs'           => [],
+            'response_example'  => null,
+            'order'             => 1,
+            'is_active'         => true,
+        ]);
+
+        IntegrationAuthStep::create([
+            'integration_id'    => $integration->id,
+            'name'              => 'Exchange Code for Access Token',
+            'step_type'         => 'login_callback',
+            'auth_type'         => 'call',
             'http_method'       => 'POST',
             'base_endpoint_url' => 'https://accounts.salla.sa/oauth2/token',
             'inputs'            => [
@@ -52,25 +110,13 @@ class SallaIntegrationSeeder extends Seeder
                     'key'          => 'code',
                     'label'        => 'Authorization Code',
                     'type'         => 'body',
-                    'require_from' => 'front',
+                    'require_from' => 'user',
                 ],
                 [
-                    'key'          => 'client_id',
-                    'label'        => 'Client ID',
+                    'key'          => 'state',
+                    'label'        => 'State (CSRF)',
                     'type'         => 'body',
-                    'require_from' => 'admin',
-                ],
-                [
-                    'key'          => 'client_secret',
-                    'label'        => 'Client Secret',
-                    'type'         => 'body',
-                    'require_from' => 'admin',
-                ],
-                [
-                    'key'          => 'redirect_uri',
-                    'label'        => 'Redirect URI',
-                    'type'         => 'body',
-                    'require_from' => 'admin',
+                    'require_from' => 'user',
                 ],
                 [
                     'key'          => 'grant_type',
@@ -80,17 +126,54 @@ class SallaIntegrationSeeder extends Seeder
                     'value'        => 'authorization_code',
                 ],
             ],
-            'outputs'           => ['access_token', 'refresh_token', 'expires_in'],
+            'outputs'           => ['access_token', 'refresh_token', 'expires', 'scope', 'token_type'],
             'response_example'  => [
-                'access_token'  => 'eg_tok_12345abcde',
-                'expires_in'    => 2592000,
-                'refresh_token' => 'eg_ref_67890fghij',
-                'token_type'    => 'Bearer',
-                'scope'         => 'offline_access'
+                'access_token'  => 'ory_at_12345abcde',
+                'expires'       => 1209599,
+                'refresh_token' => 'ory_rt_67890fghij',
+                'scope'         => 'settings.read customers.read_write offline_access',
+                'token_type'    => 'bearer',
             ],
-            'order'             => 1,
+            'order'             => 2,
             'is_active'         => true,
         ]);
+
+        // 3b. Account Settings — "User Information Details" (docs.salla.dev)
+        //     GET https://accounts.salla.sa/oauth2/user/info, Authorization: Bearer <access_token>
+        //     Used to identify which merchant/user a connected UserIntegration belongs to.
+        $integration->accountSetting()->updateOrCreate(
+            ['integration_id' => $integration->id],
+            [
+                'base_url'         => 'https://accounts.salla.sa/oauth2/user/info',
+                'http_method'      => 'GET',
+                'email_key'        => 'data.email',
+                'response_example' => [
+                    'status'  => 200,
+                    'success' => true,
+                    'data'    => [
+                        'id'         => 1689717978,
+                        'name'       => 'Test User',
+                        'email'      => 'test@gmail.com',
+                        'mobile'     => '+96652318526',
+                        'role'       => 'user',
+                        'created_at' => '2021-03-27 21:51:56',
+                        'merchant'   => [
+                            'id'                => 847769313,
+                            'username'          => 'User_name123',
+                            'name'              => 'User Name',
+                            'avatar'            => 'https://i.ibb.co/jyqRQfQ/avatar.jpg',
+                            'store_location'    => '21.589481804199123,39.19797739999999',
+                            'plan'              => 'pro',
+                            'status'            => 'active',
+                            'domain'            => 'https://www.domain.com',
+                            'tax_number'        => '424243241321234',
+                            'commercial_number' => '3552180509',
+                            'created_at'        => '2021-12-31 12:59:59',
+                        ],
+                    ],
+                ],
+            ]
+        );
 
         // 4. [SERVICE 1] Create Order Service
         $createOrderService = IntegrationService::create([

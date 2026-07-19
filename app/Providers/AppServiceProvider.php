@@ -13,6 +13,7 @@ use App\Repositories\Eloquent\IntegrationServiceParamRepository;
 use App\Repositories\Eloquent\IntegrationServiceRepository;
 use App\Repositories\Eloquent\IntegrationServiceResponseRepository;
 use App\Repositories\Eloquent\IntegrationServiceResponseViewRepository;
+use App\Repositories\Eloquent\UserIntegrationRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\IntegrationAuthStepRepositoryInterface;
 use App\Repositories\IntegrationGlobalBodyRepositoryInterface;
@@ -25,7 +26,11 @@ use App\Repositories\IntegrationServiceParamRepositoryInterface;
 use App\Repositories\IntegrationServiceRepositoryInterface;
 use App\Repositories\IntegrationServiceResponseRepositoryInterface;
 use App\Repositories\IntegrationServiceResponseViewRepositoryInterface;
+use App\Repositories\UserIntegrationRepositoryInterface;
 use App\Repositories\UserRepositoryInterface;
+use App\Events\UserIntegrationConnected;
+use App\Listeners\FetchUserIntegrationInfo;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -48,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IntegrationServiceResponseRepositoryInterface::class, IntegrationServiceResponseRepository::class);
         $this->app->bind(IntegrationServiceResponseViewRepositoryInterface::class, IntegrationServiceResponseViewRepository::class
         );
+        $this->app->bind(UserIntegrationRepositoryInterface::class, UserIntegrationRepository::class);
 
 
     }
@@ -57,6 +63,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Event::listen(UserIntegrationConnected::class, FetchUserIntegrationInfo::class);
     }
 }
