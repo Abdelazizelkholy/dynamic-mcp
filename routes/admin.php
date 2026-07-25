@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Integration\IntegrationServiceInputGroupControlle
 use App\Http\Controllers\Admin\Integration\IntegrationServiceParamController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceResponseController;
 use App\Http\Controllers\Admin\Integration\IntegrationServiceResponseViewController;
+use App\Http\Controllers\Admin\Integration\IntegrationPostmanImportController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\Integration\IntegrationController;
 use App\Http\Controllers\Admin\Integration\IntegrationAuthStepController;
@@ -62,6 +63,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('{id}', 'destroy')->middleware('permission:integration_delete');
             Route::put('{id}/change-status', 'changeStatus')->middleware('permission:integration_update');
         });
+
+        Route::post('{id}/import-postman', [IntegrationPostmanImportController::class, 'import'])
+            ->middleware('permission:integration_update');
 
         // ── Auth Steps ──────────────────────────────────────────────────────
         Route::prefix('{integrationId}/auth-steps')

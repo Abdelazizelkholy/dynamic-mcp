@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -27,6 +28,7 @@ class User extends Authenticatable implements HasMedia
         'email',
         'phone',
         'password',
+        'api_key',
     ];
 
 
@@ -38,7 +40,15 @@ class User extends Authenticatable implements HasMedia
     protected $hidden = [
         'password',
         'remember_token',
+        'api_key',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $user) {
+            $user->api_key ??= Str::random(64);
+        });
+    }
 
     /**
      * Get the attributes that should be cast.

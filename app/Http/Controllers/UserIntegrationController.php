@@ -14,6 +14,7 @@ use App\Models\IntegrationAuthStep;
 use App\Models\IntegrationService;
 use App\Repositories\IntegrationServiceInputGroupRepositoryInterface;
 use App\Repositories\IntegrationServiceInputRepositoryInterface;
+use App\Repositories\IntegrationServiceResponseRepositoryInterface;
 use App\Repositories\UserIntegrationRepositoryInterface;
 use App\Services\Integration\AuthStepRunner;
 use Illuminate\Http\JsonResponse;
@@ -27,25 +28,54 @@ class UserIntegrationController extends Controller
         private readonly UserIntegrationRepositoryInterface $repo,
         private readonly IntegrationServiceInputGroupRepositoryInterface $groupRepo,
         private readonly IntegrationServiceInputRepositoryInterface $inputRepo,
+        private readonly IntegrationServiceResponseRepositoryInterface $responseRepo,
     ) {}
 
-    // GET /user-integrations/services/{serviceId}/status — auth required. Tells the
-    // frontend whether the current user is already connected to this service's
-    // integration, plus the integration's active auth steps and this service's
-    // input groups/standalone inputs (so it knows what to collect/render).
-    public function status(Request $request, int $serviceId): JsonResponse
+    // GET /user-integrations/services/{serviceId}/execute — authenticated via the
+    // `api-key` header (see ApiKeyAuth middleware), not a standard Bearer token.
+    // Tells the caller whether the current user is already connected to this
+    // service's integration, the service/integration/user context needed to
+    // render a connect UI, and this service's input groups/standalone inputs.
+    public function execute(Request $request, int $serviceId): JsonResponse
     {
-        $service = IntegrationService::findOrFail($serviceId);
-        $integrationId = $service->integration_id;
+        $service = IntegrationService::with('integration')->findOrFail($serviceId);
+        $integration = $service->integration;
+        $integrationId = $integration->id;
+        $user = $request->user();
 
-        $userIntegration = $this->repo->findByUserAndIntegration($request->user()->id, $integrationId);
+        $userIntegration = $this->repo->findByUserAndIntegration($user->id, $integrationId);
 
         $authSteps = IntegrationAuthStep::where('integration_id', $integrationId)
             ->where('is_active', true)
             ->orderBy('order')
             ->get();
 
+        $serviceResponse = $this->responseRepo->findByService($serviceId);
+
         return ApiResponse::success([
+            'service' => [
+                'id'              => $service->id,
+                'service_name_en' => $service->service_name_en,
+                'service_name_ar' => $service->service_name_ar,
+                'description_en'  => $service->description_en,
+                'description_ar'  => $service->description_ar,
+                // Effective base URL used when calling this service.
+                'base_url'        => $service->base_url_override ?: $integration->base_api_url,
+            ],
+            'integration' => [
+                'id'             => $integration->id,
+                'name'           => $integration->name,
+                'description_en' => $integration->description_en,
+                'description_ar' => $integration->description_ar,
+                'image'          => $integration->media_url,
+            ],
+            'user' => [
+                'id'    => $user->id,
+                'name'  => $user->name,
+                'email' => $user->email,
+                'image' => $user->profile_picture_url,
+            ],
+            'output_example'   => $serviceResponse->response_example ?? [],
             'is_connected'     => $userIntegration?->status === 'connected',
             'user_integration' => $userIntegration ? [new UserIntegrationResource($userIntegration)] : [],
             'user_info'        => $userIntegration?->info ? new UserIntegrationInfoResource($userIntegration->info) : null,
