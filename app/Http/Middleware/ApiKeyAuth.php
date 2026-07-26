@@ -3,14 +3,14 @@
 namespace App\Http\Middleware;
 
 use App\Helper\ApiResponse;
-use App\Models\User;
+use App\Models\ApiKey;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Authenticates via an `api-key` request header instead of the standard
- * `Authorization: Bearer` scheme, matching it against users.api_key.
+ * `Authorization: Bearer` scheme, matching it against api_keys.key.
  */
 class ApiKeyAuth
 {
@@ -22,13 +22,13 @@ class ApiKeyAuth
             return ApiResponse::error('Missing api-key header.', 401);
         }
 
-        $user = User::where('api_key', $apiKey)->first();
+        $record = ApiKey::where('key', $apiKey)->with('user')->first();
 
-        if (! $user) {
+        if (! $record || ! $record->user) {
             return ApiResponse::error('Invalid api-key.', 401);
         }
 
-        $request->setUserResolver(fn () => $user);
+        $request->setUserResolver(fn () => $record->user);
 
         return $next($request);
     }

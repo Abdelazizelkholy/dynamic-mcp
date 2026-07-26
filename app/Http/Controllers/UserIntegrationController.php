@@ -106,7 +106,8 @@ class UserIntegrationController extends Controller
         return ApiResponse::success(new UserIntegrationResource($userIntegration));
     }
 
-    // POST /user-integrations/{integrationId}/connect
+    // POST /user-integrations/{integrationId}/connect — authenticated via the
+    // `api-key` header (see ApiKeyAuth middleware), not a standard Bearer token.
     public function connect(ConnectUserIntegrationRequest $request, int $integrationId): JsonResponse
     {
         $integration = Integration::findOrFail($integrationId);

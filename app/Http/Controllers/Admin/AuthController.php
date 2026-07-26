@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Auth\LoginRequest;
 use App\Http\Requests\Admin\Auth\ResetPasswordRequest;
 use App\Http\Requests\Admin\Auth\SendOtpRequest;
+use App\Http\Resources\Admin\User\UserResource;
 use App\Mail\SendOtpMail;
 use App\Models\PasswordResetOtp;
 use App\Models\User;
@@ -34,7 +35,7 @@ class AuthController extends Controller
         $token = $user->createToken('admin_token')->plainTextToken;
 
         return ApiResponse::success([
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token
         ], 'Login successful');
     }

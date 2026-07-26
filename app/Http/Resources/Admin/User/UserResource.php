@@ -15,6 +15,7 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'roles' => $this->getRoleNames(),
             'profile_picture' => $this->profile_picture_url,
+            'api_key' => $this->apiKey?->key,
             'created_at' => $this->created_at?->toDateTimeString(),
         ];
     }

@@ -1,11 +1,15 @@
 <?php
 
+use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserIntegrationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('test2' , function(){
     echo "test";
 });
+
+// Public, non-admin login — returns the user (incl. api_key) + a bearer token.
+Route::post('login', [UserAuthController::class, 'login']);
 
 /*
 |--------------------------------------------------------------------------
@@ -20,13 +24,13 @@ Route::prefix('user-integrations')->group(function () {
 
     // Authenticated via `api-key` header instead of Authorization: Bearer.
     Route::middleware('api-key')->group(function () {
+        Route::post('{integrationId}/connect', [UserIntegrationController::class, 'connect']);
         Route::get('services/{serviceId}/execute', [UserIntegrationController::class, 'execute']);
     });
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [UserIntegrationController::class, 'index']);
         Route::get('{id}', [UserIntegrationController::class, 'show']);
-        Route::post('{integrationId}/connect', [UserIntegrationController::class, 'connect']);
         Route::post('{id}/refresh', [UserIntegrationController::class, 'refresh']);
         Route::delete('{id}', [UserIntegrationController::class, 'destroy']);
     });

@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -28,7 +29,6 @@ class User extends Authenticatable implements HasMedia
         'email',
         'phone',
         'password',
-        'api_key',
     ];
 
 
@@ -40,14 +40,22 @@ class User extends Authenticatable implements HasMedia
     protected $hidden = [
         'password',
         'remember_token',
-        'api_key',
     ];
 
     protected static function booted(): void
     {
-        static::creating(function (self $user) {
-            $user->api_key ??= Str::random(64);
+        static::created(function (self $user) {
+            // created() only fires once for a brand-new row, so no existing
+            // ApiKey can be present yet — creating unconditionally avoids
+            // caching a stale null relation on this in-memory instance.
+            $apiKey = $user->apiKey()->create(['key' => Str::random(64)]);
+            $user->setRelation('apiKey', $apiKey);
         });
+    }
+
+    public function apiKey(): HasOne
+    {
+        return $this->hasOne(ApiKey::class);
     }
 
     /**

@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionSeeder::class,  // 1. create permissions first
             AdminUserSeeder::class,   // 2. create admin user + assign role
-            IntegrationSeeder::class, // 3. seed integrations
+            NormalUserSeeder::class,  // 3. create a non-admin user for /api/login + api-key testing
+            IntegrationSeeder::class, // 4. seed integrations
             SallaIntegrationSeeder::class,
         ]);
     }
