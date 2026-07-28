@@ -24,22 +24,27 @@ class AuthStepRunner
     private const SECRET_KEYS = ['client_secret', 'refresh_token', 'access_token', 'password'];
 
     /**
-     * Starts the auth flow: runs the first active step.
-     * - auth_type = redirect  -> returns a redirect_url the frontend must send the user to.
-     * - auth_type = call      -> executes immediately (e.g. set_credentials) using $userInputs.
+     * Starts (or resumes) the auth flow for a user against this integration.
+     * - already connected        -> re-runs this integration's refresh_token step (see refresh()).
+     * - auth_type = redirect     -> returns a redirect_url the frontend must send the user to.
+     * - auth_type = call         -> executes immediately (e.g. set_credentials) using $userInputs.
      */
     public function connect(Integration $integration, User $user, array $userInputs = []): array
     {
+        $userIntegration = UserIntegration::firstOrCreate(
+            ['user_id' => $user->id, 'integration_id' => $integration->id],
+            ['status' => 'pending']
+        );
+
+        if ($userIntegration->status === 'connected') {
+            return $this->refresh($userIntegration);
+        }
+
         $step = $integration->authSteps()->where('is_active', true)->orderBy('order')->first();
 
         if (! $step) {
             throw new RuntimeException('This integration has no active auth steps configured.');
         }
-
-        $userIntegration = UserIntegration::firstOrCreate(
-            ['user_id' => $user->id, 'integration_id' => $integration->id],
-            ['status' => 'pending']
-        );
 
         if ($step->auth_type === 'redirect') {
             return $this->buildRedirect($step, $userIntegration, $userInputs);
@@ -85,7 +90,7 @@ class AuthStepRunner
         return $userIntegration->fresh();
     }
 
-    public function refresh(UserIntegration $userIntegration): UserIntegration
+    private function refresh(UserIntegration $userIntegration): array
     {
         $step = $userIntegration->integration->authSteps()
             ->where('is_active', true)
@@ -99,7 +104,7 @@ class AuthStepRunner
 
         $this->runCallStep($step, $userIntegration, ['user' => [], 'front' => []]);
 
-        return $userIntegration->fresh();
+        return ['user_integration' => $userIntegration->fresh(), 'redirect_url' => null];
     }
 
     // ── Internals ──────────────────────────────────────────────────────────

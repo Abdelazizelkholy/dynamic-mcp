@@ -108,6 +108,8 @@ class UserIntegrationController extends Controller
 
     // POST /user-integrations/{integrationId}/connect — authenticated via the
     // `api-key` header (see ApiKeyAuth middleware), not a standard Bearer token.
+    // If the user is already connected to this integration, this instead re-runs
+    // its refresh_token auth step (see AuthStepRunner::connect()/refresh()).
     public function connect(ConnectUserIntegrationRequest $request, int $integrationId): JsonResponse
     {
         $integration = Integration::findOrFail($integrationId);
@@ -157,24 +159,6 @@ class UserIntegrationController extends Controller
             new UserIntegrationResource($userIntegration),
             'Integration connected successfully.'
         );
-    }
-
-    // POST /user-integrations/{id}/refresh
-    public function refresh(Request $request, int $id): JsonResponse
-    {
-        $userIntegration = $this->repo->find($id);
-
-        if (! $userIntegration || $userIntegration->user_id !== $request->user()->id) {
-            return ApiResponse::error('User integration not found.', 404);
-        }
-
-        try {
-            $userIntegration = $this->runner->refresh($userIntegration);
-        } catch (Throwable $e) {
-            return ApiResponse::error($e->getMessage(), 422);
-        }
-
-        return ApiResponse::success(new UserIntegrationResource($userIntegration), 'Token refreshed successfully.');
     }
 
     // DELETE /user-integrations/{id}

@@ -23,6 +23,8 @@ Route::prefix('user-integrations')->group(function () {
     Route::get('{integrationId}/callback', [UserIntegrationController::class, 'callback']);
 
     // Authenticated via `api-key` header instead of Authorization: Bearer.
+    // `connect` also doubles as the refresh entrypoint: if the user is already
+    // connected to this integration, it re-runs the refresh_token step instead.
     Route::middleware('api-key')->group(function () {
         Route::post('{integrationId}/connect', [UserIntegrationController::class, 'connect']);
         Route::get('services/{serviceId}/execute', [UserIntegrationController::class, 'execute']);
@@ -31,7 +33,6 @@ Route::prefix('user-integrations')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [UserIntegrationController::class, 'index']);
         Route::get('{id}', [UserIntegrationController::class, 'show']);
-        Route::post('{id}/refresh', [UserIntegrationController::class, 'refresh']);
         Route::delete('{id}', [UserIntegrationController::class, 'destroy']);
     });
 });

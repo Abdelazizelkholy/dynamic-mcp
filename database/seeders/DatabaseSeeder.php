@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
             NormalUserSeeder::class,  // 3. create a non-admin user for /api/login + api-key testing
             IntegrationSeeder::class, // 4. seed integrations
             SallaIntegrationSeeder::class,
+            PaymobIntegrationSeeder::class,    // set_credentials example
+            QuickbooksIntegrationSeeder::class, // refresh_token example
         ]);
     }
 }
