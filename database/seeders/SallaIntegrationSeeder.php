@@ -107,6 +107,24 @@ class SallaIntegrationSeeder extends Seeder
             'base_endpoint_url' => 'https://accounts.salla.sa/oauth2/token',
             'inputs'            => [
                 [
+                    'key'          => 'client_id',
+                    'label'        => 'Client ID',
+                    'type'         => 'body',
+                    'require_from' => 'user',
+                ],
+                [
+                    'key'          => 'client_secret',
+                    'label'        => 'Client Secret',
+                    'type'         => 'body',
+                    'require_from' => 'user',
+                ],
+                [
+                    'key'          => 'redirect_uri',
+                    'label'        => 'Redirect URI',
+                    'type'         => 'body',
+                    'require_from' => 'user',
+                ],
+                [
                     'key'          => 'code',
                     'label'        => 'Authorization Code',
                     'type'         => 'body',
