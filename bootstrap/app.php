@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 
@@ -39,5 +40,16 @@ return Application::configure(basePath: dirname(__DIR__))
         // expired/missing/invalid token must return JSON 401, not a redirect.
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             return ApiResponse::error('Unauthenticated.', 401);
+        });
+
+        // Same reasoning: without an explicit `Accept: application/json` header,
+        // Laravel's default FormRequest failure redirects back() (HTML 302).
+        // This is a pure API app, so validation failures must always be JSON 422.
+        $exceptions->render(function (ValidationException $e, Request $request) {
+            return response()->json([
+                'status'  => false,
+                'message' => $e->getMessage(),
+                'errors'  => $e->errors(),
+            ], $e->status);
         });
     })->create();

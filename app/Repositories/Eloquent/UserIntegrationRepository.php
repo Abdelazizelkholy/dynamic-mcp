@@ -13,7 +13,7 @@ class UserIntegrationRepository implements UserIntegrationRepositoryInterface
     public function allByUser(int $userId): Collection
     {
         return $this->model
-            ->with('integration:id,name,category')
+            ->with(['integration:id,name,category', 'info'])
             ->where('user_id', $userId)
             ->latest()
             ->get();
@@ -21,7 +21,7 @@ class UserIntegrationRepository implements UserIntegrationRepositoryInterface
 
     public function find(int $id): ?UserIntegration
     {
-        return $this->model->with('integration:id,name,category')->find($id);
+        return $this->model->with(['integration:id,name,category', 'info'])->find($id);
     }
 
     public function findByUserAndIntegration(int $userId, int $integrationId): ?UserIntegration

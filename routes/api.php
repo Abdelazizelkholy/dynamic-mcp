@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\UserAccountController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserIntegrationController;
 use Illuminate\Support\Facades\Route;
@@ -11,17 +10,6 @@ Route::get('test2' , function(){
 
 // Public, non-admin login — returns the user (incl. api_key) + a bearer token.
 Route::post('login', [UserAuthController::class, 'login']);
-
-/*
-|--------------------------------------------------------------------------
-| Account — self-service for the logged-in end-user (not Admin\UserController)
-|--------------------------------------------------------------------------
-*/
-Route::middleware('auth:sanctum')->prefix('account')->controller(UserAccountController::class)->group(function () {
-    Route::get('/', 'show');
-    Route::put('/', 'update');
-    Route::delete('/', 'destroy');
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +33,7 @@ Route::prefix('user-integrations')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [UserIntegrationController::class, 'index']);
         Route::get('{id}', [UserIntegrationController::class, 'show']);
+        Route::put('{id}', [UserIntegrationController::class, 'update']);
         Route::delete('{id}', [UserIntegrationController::class, 'destroy']);
     });
 });

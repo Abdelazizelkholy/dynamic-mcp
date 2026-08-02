@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Helper\ApiResponse;
 use App\Http\Requests\UserIntegration\ConnectUserIntegrationRequest;
+use App\Http\Requests\UserIntegration\UpdateUserIntegrationRequest;
+use App\Models\UserIntegrationInfo;
 use App\Http\Resources\Admin\AuthStep\IntegrationAuthStepResource;
 use App\Http\Resources\Admin\ServiceInput\IntegrationServiceInputGroupResource;
 use App\Http\Resources\Admin\ServiceInput\IntegrationServiceInputResource;
@@ -104,6 +106,27 @@ class UserIntegrationController extends Controller
         }
 
         return ApiResponse::success(new UserIntegrationResource($userIntegration));
+    }
+
+    // PUT /user-integrations/{id} — manually corrects the login data (email)
+    // normally auto-fetched by FetchUserIntegrationInfo via account_setting.email_key.
+    public function update(UpdateUserIntegrationRequest $request, int $id): JsonResponse
+    {
+        $userIntegration = $this->repo->find($id);
+
+        if (! $userIntegration || $userIntegration->user_id !== $request->user()->id) {
+            return ApiResponse::error('User integration not found.', 404);
+        }
+
+        UserIntegrationInfo::updateOrCreate(
+            ['user_integration_id' => $userIntegration->id],
+            ['email' => $request->validated('email')]
+        );
+
+        return ApiResponse::success(
+            new UserIntegrationResource($userIntegration->fresh(['integration', 'info'])),
+            'Account updated successfully.'
+        );
     }
 
     // POST /user-integrations/{integrationId}/connect — authenticated via the
