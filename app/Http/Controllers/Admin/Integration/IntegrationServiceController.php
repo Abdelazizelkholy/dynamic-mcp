@@ -20,15 +20,16 @@ class IntegrationServiceController extends Controller
     {
     }
 
-    // GET /admin/integrations/{integrationId}/services?search=orders
-    public function index(IndexServiceRequest $request, int $integrationId): JsonResponse
+    // GET /admin/integrations/{integrationId}/services?search=orders&per_page=15&page=1
+    public function index(IndexServiceRequest $request, int $integrationId)
     {
-        $services = $this->repo->allByIntegration($integrationId, $request->search);
-
-        return ApiResponse::success(
-            IntegrationServiceResource::collection($services),
-            'Services retrieved successfully.'
+        $services = $this->repo->allByIntegration(
+            $integrationId,
+            $request->search,
+            $request->per_page ?? 15,
         );
+
+        return IntegrationServiceResource::collection($services);
     }
 
     // GET /admin/integrations/{integrationId}/services/{id}

@@ -4,11 +4,10 @@
 namespace App\Repositories;
 
 use App\Models\IntegrationService;
-use Illuminate\Database\Eloquent\Collection;
 
 interface IntegrationServiceRepositoryInterface
 {
-    public function allByIntegration(int $integrationId, ?string $search): Collection;
+    public function allByIntegration(int $integrationId, ?string $search, int $perPage = 15);
 
     public function find(int $id): ?IntegrationService;
 

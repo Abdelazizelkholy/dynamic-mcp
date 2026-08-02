@@ -5,7 +5,6 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\IntegrationService;
 use App\Repositories\IntegrationServiceRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
 
 class IntegrationServiceRepository implements IntegrationServiceRepositoryInterface
 {
@@ -15,13 +14,16 @@ class IntegrationServiceRepository implements IntegrationServiceRepositoryInterf
 
     // ── Read ───────────────────────────────────────────────────────────────────
 
-    public function allByIntegration(int $integrationId, ?string $search = null): Collection
+    public function allByIntegration(int $integrationId, ?string $search = null, int $perPage = 15)
     {
         return $this->model
             ->where('integration_id', $integrationId)
-            ->when($search, fn($q) => $q->where('service_name', 'like', "%{$search}%"))
+            ->when($search, fn($q) => $q->where(function ($q) use ($search) {
+                $q->where('service_name_en', 'like', "%{$search}%")
+                    ->orWhere('service_name_ar', 'like', "%{$search}%");
+            }))
             ->orderBy('order')
-            ->get();
+            ->paginate($perPage);
     }
 
     public function find(int $id): ?IntegrationService
