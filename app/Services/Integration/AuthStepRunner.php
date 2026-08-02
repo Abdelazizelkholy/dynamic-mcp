@@ -25,7 +25,9 @@ class AuthStepRunner
 
     /**
      * Starts (or resumes) the auth flow for a user against this integration.
-     * - already connected        -> re-runs this integration's refresh_token step (see refresh()).
+     * - already connected AND a refresh_token step exists -> re-runs it (see refresh()).
+     * - already connected but no refresh_token step        -> re-runs the normal flow below
+     *   (re-authenticate from scratch, e.g. re-submitting set_credentials).
      * - auth_type = redirect     -> returns a redirect_url the frontend must send the user to.
      * - auth_type = call         -> executes immediately (e.g. set_credentials) using $userInputs.
      */
@@ -36,7 +38,7 @@ class AuthStepRunner
             ['status' => 'pending']
         );
 
-        if ($userIntegration->status === 'connected') {
+        if ($userIntegration->status === 'connected' && $this->hasRefreshStep($integration)) {
             return $this->refresh($userIntegration);
         }
 
@@ -88,6 +90,14 @@ class AuthStepRunner
         UserIntegrationConnected::dispatch($userIntegration->fresh());
 
         return $userIntegration->fresh();
+    }
+
+    private function hasRefreshStep(Integration $integration): bool
+    {
+        return $integration->authSteps()
+            ->where('is_active', true)
+            ->where('step_type', 'refresh_token')
+            ->exists();
     }
 
     private function refresh(UserIntegration $userIntegration): array
