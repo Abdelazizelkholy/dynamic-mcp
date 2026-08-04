@@ -100,9 +100,7 @@ class EnumController extends Controller
                 ['key' => 'boolean',        'label' => 'Boolean'],
             //    ['key' => 'group',          'label' => 'Group'],
                 ['key' => 'file',           'label' => 'File'],
-                ['key' => 'file_url',       'label' => 'File URL'],
                 ['key' => 'files',          'label' => 'Multiple Files'],
-                ['key' => 'files_url',      'label' => 'Files URL'],
                 ['key' => 'date',           'label' => 'Date'],       // ← new
                 ['key' => 'datetime',       'label' => 'Date Time'],  // ← new
             ],

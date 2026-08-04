@@ -14,7 +14,7 @@ class UpdateUserIntegrationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email'],
+            'name' => ['required', 'string', 'max:255'],
         ];
     }
 }

@@ -108,8 +108,10 @@ class UserIntegrationController extends Controller
         return ApiResponse::success(new UserIntegrationResource($userIntegration));
     }
 
-    // PUT /user-integrations/{id} — manually corrects the login data (email)
+    // PUT /user-integrations/{id} — manually corrects the login data (name)
     // normally auto-fetched by FetchUserIntegrationInfo via account_setting.email_key.
+    // Note: stored in the `email` column on user_integration_infos, but exposed/accepted
+    // as `name` (see UserIntegrationResource) since that's what this value represents.
     public function update(UpdateUserIntegrationRequest $request, int $id): JsonResponse
     {
         $userIntegration = $this->repo->find($id);
@@ -120,7 +122,7 @@ class UserIntegrationController extends Controller
 
         UserIntegrationInfo::updateOrCreate(
             ['user_integration_id' => $userIntegration->id],
-            ['email' => $request->validated('email')]
+            ['email' => $request->validated('name')]
         );
 
         return ApiResponse::success(

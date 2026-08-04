@@ -103,7 +103,7 @@ class IntegrationServiceInputGroupController extends Controller
             'groups.*.key_name'                    => ['required', 'string', 'max:255'],
             'groups.*.data_type'                   => ['required', 'in:object,array_of_objects,array'],
             'groups.*.inputs'                      => ['nullable', 'array'],
-            'groups.*.inputs.*.field_type'         => ['nullable', 'in:input,select,dynamic_select,boolean,group,file,file_url,files,files_url,date,datetime'],
+            'groups.*.inputs.*.field_type'         => ['nullable', 'in:input,select,dynamic_select,boolean,group,file,files,date,datetime'],
             'groups.*.inputs.*.key'                => ['nullable', 'string', 'max:255'],
             'groups.*.inputs.*.placeholder'        => ['nullable', 'string'],
             'groups.*.inputs.*.type'               => ['nullable', 'in:params,input'],

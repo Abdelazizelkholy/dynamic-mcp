@@ -28,6 +28,9 @@ class IntegrationServiceInputResource extends JsonResource
             // select
             'options' => $this->options ?? [],
 
+            // date / datetime
+            'date_format' => $this->date_format,
+
             'filling_data'    => $this->filling_data ?? [],
             'filling_services'=> $this->formatFillingServices(),
 
@@ -37,7 +40,8 @@ class IntegrationServiceInputResource extends JsonResource
                 $this->relationLoaded('dynamicService') && $this->dynamicService,
                 fn() => [
                     'id' => $this->dynamicService->id,
-                    'service_name' => $this->dynamicService->service_name,
+                    'service_name_en' => $this->dynamicService->service_name_en,
+                    'service_name_ar' => $this->dynamicService->service_name_ar,
                 ]
             ),
 

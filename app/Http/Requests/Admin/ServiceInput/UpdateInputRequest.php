@@ -18,7 +18,7 @@ class UpdateInputRequest extends FormRequest
         return [
             'inputs'                      => ['required', 'array', 'min:1'],
             'inputs.*.id'                 => ['required', 'integer', 'exists:integration_service_inputs,id'],
-            'inputs.*.field_type'         => ['sometimes', 'in:input,select,dynamic_select,boolean,group,file,file_url,files,files_url'],
+            'inputs.*.field_type'         => ['sometimes', 'in:input,select,dynamic_select,boolean,group,file,files,date,datetime'],
             'inputs.*.key'                => ['sometimes', 'string', 'max:255'],
             'inputs.*.placeholder'        => ['nullable', 'string'],
             'inputs.*.type'               => ['sometimes', 'in:params,input'],
@@ -28,6 +28,7 @@ class UpdateInputRequest extends FormRequest
             'inputs.*.options'            => ['nullable', 'array'],
             'inputs.*.options.*'          => ['string'],
             'inputs.*.dynamic_service_id' => ['nullable', 'integer', 'exists:integration_services,id'],
+            'inputs.*.date_format'        => ['nullable', 'string', 'max:50'],
         ];
     }
 

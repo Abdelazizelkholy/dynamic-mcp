@@ -99,9 +99,7 @@ class IntegrationServiceInput extends Model
             'boolean'        => 'Boolean',
             'group'          => 'Group',
             'file'           => 'File',
-            'file_url'       => 'File URL',
             'files'          => 'Files',
-            'files_url'      => 'Files URL',
             default          => 'Input',
         };
     }
