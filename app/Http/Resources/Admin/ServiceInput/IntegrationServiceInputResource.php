@@ -19,11 +19,15 @@ class IntegrationServiceInputResource extends JsonResource
             'field_type_label' => $this->field_type_label,
 
             'key' => $this->key,
+            'label' => $this->label,
             'placeholder' => $this->placeholder,
             'type' => $this->type,
             'key_type' => $this->key_type,
             'validation' => $this->validation,
             'require_from' => $this->require_from,
+
+            // static value, used when require_from = admin
+            'value' => $this->value,
 
             // select
             'options' => $this->options ?? [],

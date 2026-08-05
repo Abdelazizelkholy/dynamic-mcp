@@ -50,8 +50,8 @@ public function find(int $id): ?IntegrationServiceInput
                 )
                 ->max('order') + 1;
 
-        // placeholder is never a free-standing label — it must always mirror `key`.
-        $data['placeholder'] = $data['key'];
+        // label is never a free-standing string — it must always mirror `field_type`.
+        $data['label'] = $data['field_type'];
 
         return $this->model->create($data);
     }
@@ -60,8 +60,8 @@ public function find(int $id): ?IntegrationServiceInput
     {
         $input = $this->model->findOrFail($id);
 
-        // placeholder is never a free-standing label — it must always mirror `key`.
-        $data['placeholder'] = $data['key'] ?? $input->key;
+        // label is never a free-standing string — it must always mirror `field_type`.
+        $data['label'] = $data['field_type'] ?? $input->field_type;
 
         $input->update($data);
 

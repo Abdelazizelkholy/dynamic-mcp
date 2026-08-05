@@ -22,7 +22,9 @@ class UpdateGroupWithInputsRequest extends FormRequest
             // ✅ كل fields بـ sometimes — لأن لو id موجود مش لازم نبعت كل حاجة
             'groups.*.inputs.*.field_type'              => ['sometimes', 'in:input,select,dynamic_select,boolean,group,file,files,date,datetime'],
             'groups.*.inputs.*.key'                     => ['sometimes', 'string', 'max:255'],
+            'groups.*.inputs.*.label'                   => ['nullable', 'string', 'max:255'],
             'groups.*.inputs.*.placeholder'             => ['nullable', 'string'],
+            'groups.*.inputs.*.value'                   => ['nullable', 'string'],
             'groups.*.inputs.*.type'                    => ['nullable', 'in:params,input'],
             'groups.*.inputs.*.key_type'                => ['sometimes', 'in:body,headers'],
             'groups.*.inputs.*.validation'              => ['sometimes', 'in:required,nullable'],

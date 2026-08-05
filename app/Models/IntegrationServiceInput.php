@@ -15,7 +15,9 @@ class IntegrationServiceInput extends Model
         'parent_group_id',
         'field_type',
         'key',
+        'label',
         'placeholder',
+        'value',
         'type',
         'key_type',
         'validation',
@@ -100,6 +102,8 @@ class IntegrationServiceInput extends Model
             'group'          => 'Group',
             'file'           => 'File',
             'files'          => 'Files',
+            'date'           => 'Date',
+            'datetime'       => 'Date Time',
             default          => 'Input',
         };
     }

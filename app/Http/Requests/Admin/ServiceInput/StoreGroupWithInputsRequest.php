@@ -29,6 +29,7 @@ class StoreGroupWithInputsRequest extends FormRequest
             'groups.*.inputs.*.field_type'         => ['nullable', 'in:input,select,dynamic_select,boolean,group,file,files,date,datetime'],
             'groups.*.inputs.*.key'                => ['nullable', 'string', 'max:255'],
             'groups.*.inputs.*.placeholder'        => ['nullable', 'string'],
+            'groups.*.inputs.*.value'              => ['nullable', 'string'],
             'groups.*.inputs.*.type'               => ['nullable', 'in:params,input'],
             'groups.*.inputs.*.key_type'           => ['nullable', 'in:body,headers'],
             'groups.*.inputs.*.validation'         => ['nullable', 'in:required,nullable'],
