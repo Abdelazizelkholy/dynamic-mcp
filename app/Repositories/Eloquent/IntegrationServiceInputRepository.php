@@ -50,18 +50,12 @@ public function find(int $id): ?IntegrationServiceInput
                 )
                 ->max('order') + 1;
 
-        // label is never a free-standing string — it must always mirror `field_type`.
-        $data['label'] = $data['field_type'];
-
         return $this->model->create($data);
     }
 
     public function update(int $id, array $data): IntegrationServiceInput
     {
         $input = $this->model->findOrFail($id);
-
-        // label is never a free-standing string — it must always mirror `field_type`.
-        $data['label'] = $data['field_type'] ?? $input->field_type;
 
         $input->update($data);
 

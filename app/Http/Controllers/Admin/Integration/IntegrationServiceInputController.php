@@ -6,6 +6,7 @@ use App\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ServiceInput\StoreInputRequest;
 use App\Http\Requests\Admin\ServiceInput\UpdateInputRequest;
+use App\Http\Requests\Admin\ServiceInput\UpdateSingleInputRequest;
 use App\Http\Resources\Admin\ServiceInput\IntegrationServiceInputResource;
 use App\Models\IntegrationServiceInput;
 use App\Models\IntegrationServiceInputGroup;
@@ -75,16 +76,23 @@ class IntegrationServiceInputController extends Controller
 
         DB::transaction(function () use ($serviceId, $request, &$created) {
 
+            // This endpoint only manages standalone inputs (group_id IS NULL) — new
+            // rows are always created with group_id: null below. Scope both deletes
+            // to that, or every grouped input (and its nested groups) gets wiped too.
+            $standaloneInputIds = IntegrationServiceInput::where('integration_service_id', $serviceId)
+                ->whereNull('group_id')
+                ->pluck('id');
+
             // Auto-linked params (type = params) are tied to inputs we're about to
             // wipe below via a raw bulk delete, which doesn't fire model events.
             IntegrationServiceParam::where('integration_service_id', $serviceId)
                 ->where('type', 'params')
+                ->whereIn('input_id', $standaloneInputIds)
                 ->delete();
 
-            IntegrationServiceInput::where(
-                'integration_service_id',
-                $serviceId
-            )->delete();
+            IntegrationServiceInput::where('integration_service_id', $serviceId)
+                ->whereNull('group_id')
+                ->delete();
 
             $created = [];
 
@@ -128,7 +136,7 @@ class IntegrationServiceInputController extends Controller
     }
 
     // PUT /integrations/{integrationId}/services/{serviceId}/inputs/{id} — single update
-    public function updateSingle(UpdateInputRequest $request, int $integrationId, int $serviceId, int $id): JsonResponse
+    public function updateSingle(UpdateSingleInputRequest $request, int $integrationId, int $serviceId, int $id): JsonResponse
     {
         $input = $this->repo->find($id);
 

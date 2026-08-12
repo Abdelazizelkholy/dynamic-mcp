@@ -7,18 +7,17 @@ use App\Http\Requests\UserIntegration\ConnectUserIntegrationRequest;
 use App\Http\Requests\UserIntegration\UpdateUserIntegrationRequest;
 use App\Models\UserIntegrationInfo;
 use App\Http\Resources\Admin\AuthStep\IntegrationAuthStepResource;
-use App\Http\Resources\Admin\ServiceInput\IntegrationServiceInputGroupResource;
 use App\Http\Resources\Admin\ServiceInput\IntegrationServiceInputResource;
 use App\Http\Resources\UserIntegration\UserIntegrationInfoResource;
 use App\Http\Resources\UserIntegration\UserIntegrationResource;
 use App\Models\Integration;
 use App\Models\IntegrationAuthStep;
 use App\Models\IntegrationService;
-use App\Repositories\IntegrationServiceInputGroupRepositoryInterface;
 use App\Repositories\IntegrationServiceInputRepositoryInterface;
 use App\Repositories\IntegrationServiceResponseRepositoryInterface;
 use App\Repositories\UserIntegrationRepositoryInterface;
 use App\Services\Integration\AuthStepRunner;
+use App\Services\Integration\ServiceInputGroupTreeBuilder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Throwable;
@@ -28,9 +27,9 @@ class UserIntegrationController extends Controller
     public function __construct(
         private readonly AuthStepRunner $runner,
         private readonly UserIntegrationRepositoryInterface $repo,
-        private readonly IntegrationServiceInputGroupRepositoryInterface $groupRepo,
         private readonly IntegrationServiceInputRepositoryInterface $inputRepo,
         private readonly IntegrationServiceResponseRepositoryInterface $responseRepo,
+        private readonly ServiceInputGroupTreeBuilder $treeBuilder,
     ) {}
 
     // GET /user-integrations/services/{serviceId}/execute — authenticated via the
@@ -82,7 +81,10 @@ class UserIntegrationController extends Controller
             'user_integration' => $userIntegration ? [new UserIntegrationResource($userIntegration)] : [],
             'user_info'        => $userIntegration?->info ? new UserIntegrationInfoResource($userIntegration->info) : null,
             'auth_steps'       => IntegrationAuthStepResource::collection($authSteps),
-            'groups'           => IntegrationServiceInputGroupResource::collection($this->groupRepo->allByService($serviceId)),
+            // Same nested groups/inputs/nested_groups tree shape as the admin
+            // input-groups listing (ServiceInputGroupTreeBuilder), so this response
+            // never drifts out of sync with GET .../input-groups.
+            'groups'           => $this->treeBuilder->build($serviceId),
             'inputs'           => IntegrationServiceInputResource::collection($this->inputRepo->standaloneByService($serviceId)),
         ]);
     }
