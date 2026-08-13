@@ -60,6 +60,10 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/', 'store')->middleware('permission:integration_create');
             Route::get('{id}', 'show')->middleware('permission:integration_read');
             Route::put('{id}', 'update')->middleware('permission:integration_update');
+            // Alias of the PUT above — PHP never populates $_POST/$_FILES for a
+            // literal PUT with a multipart body, so a genuine POST is required to
+            // upload integration_media without needing Laravel's _method spoofing.
+            Route::post('{id}', 'update')->middleware('permission:integration_update');
             Route::delete('{id}', 'destroy')->middleware('permission:integration_delete');
             Route::put('{id}/change-status', 'changeStatus')->middleware('permission:integration_update');
         });
