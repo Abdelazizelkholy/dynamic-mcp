@@ -121,11 +121,14 @@ class IntegrationServiceInputGroupController extends Controller
         $groups = $data['groups'];
 
         DB::transaction(function () use ($serviceId, $groups, &$result) {
+            // deleteGroupRecursive() already removes every input scoped to each of
+            // these groups (group_id), so there's nothing group-related left to
+            // delete afterward — an extra unscoped delete here would also wipe
+            // standalone inputs (group_id IS NULL), which this endpoint must not touch.
             $existingGroups = IntegrationServiceInputGroup::where('integration_service_id', $serviceId)->get();
             foreach ($existingGroups as $group) {
                 $this->deleteGroupRecursive($group->id, $serviceId);
             }
-            IntegrationServiceInput::where('integration_service_id', $serviceId)->delete();
 
             // 2. Insert fresh
             $result = [];
