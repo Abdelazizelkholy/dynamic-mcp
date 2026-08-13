@@ -28,6 +28,8 @@ Route::prefix('user-integrations')->group(function () {
     Route::middleware('api-key')->group(function () {
         Route::post('{integrationId}/connect', [UserIntegrationController::class, 'connect']);
         Route::get('services/{serviceId}/execute', [UserIntegrationController::class, 'execute']);
+        // POST counterpart of the GET above — actually calls the third-party API.
+        Route::post('services/{serviceId}/execute', [UserIntegrationController::class, 'run']);
     });
 
     Route::middleware('auth:sanctum')->group(function () {

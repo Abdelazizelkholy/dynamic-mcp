@@ -17,6 +17,7 @@ use App\Repositories\IntegrationServiceInputRepositoryInterface;
 use App\Repositories\IntegrationServiceResponseRepositoryInterface;
 use App\Repositories\UserIntegrationRepositoryInterface;
 use App\Services\Integration\AuthStepRunner;
+use App\Services\Integration\ServiceExecutionEngine;
 use App\Services\Integration\ServiceInputGroupTreeBuilder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,6 +31,7 @@ class UserIntegrationController extends Controller
         private readonly IntegrationServiceInputRepositoryInterface $inputRepo,
         private readonly IntegrationServiceResponseRepositoryInterface $responseRepo,
         private readonly ServiceInputGroupTreeBuilder $treeBuilder,
+        private readonly ServiceExecutionEngine $executionEngine,
     ) {}
 
     // GET /user-integrations/services/{serviceId}/execute — authenticated via the
@@ -87,6 +89,35 @@ class UserIntegrationController extends Controller
             'groups'           => $this->treeBuilder->build($serviceId),
             'inputs'           => IntegrationServiceInputResource::collection($this->inputRepo->standaloneByService($serviceId)),
         ]);
+    }
+
+    // POST /user-integrations/services/{serviceId}/execute — authenticated via the
+    // `api-key` header, same as the GET above. Actually calls the third-party API:
+    // builds the URL (path params), query, body (incl. groups) and headers from the
+    // service's stored definition + the caller's inputs, sends the request, and
+    // applies output_filter_keys to the response.
+    public function run(Request $request, int $serviceId): JsonResponse
+    {
+        $service = IntegrationService::with('integration')->findOrFail($serviceId);
+        $user = $request->user();
+
+        $userIntegration = $this->repo->findByUserAndIntegration($user->id, $service->integration_id);
+
+        if (! $userIntegration || $userIntegration->status !== 'connected') {
+            return ApiResponse::error('You must connect this integration before executing this service.', 422);
+        }
+
+        $inputData = $request->has('inputs')
+            ? (array) $request->input('inputs')
+            : $request->except('inputs');
+
+        try {
+            $result = $this->executionEngine->execute($service, $userIntegration, $inputData);
+        } catch (Throwable $e) {
+            return ApiResponse::error('Execution failed: '.$e->getMessage(), 422);
+        }
+
+        return ApiResponse::success($result, 'Service executed successfully.');
     }
 
     // GET /user-integrations
