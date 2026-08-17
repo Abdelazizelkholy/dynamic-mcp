@@ -487,6 +487,20 @@ class SallaIntegrationSeeder extends Seeder
             'order'                  => 3,
         ]);
 
+        // Required by Salla's real Create Product endpoint (docs.salla.dev/api-5394167) —
+        // omitted here originally, which 422s with "product_type field is required".
+        IntegrationServiceInput::create([
+            'integration_service_id' => $createProductService->id,
+            'field_type'             => 'select',
+            'key'                    => 'product_type',
+            'placeholder'            => 'product',
+            'type'                   => 'input',
+            'validation'             => 'required',
+            'require_from'           => 'user',
+            'options'                => ['product', 'service', 'group_products', 'codes', 'digital', 'food', 'booking', 'donating'],
+            'order'                  => 4,
+        ]);
+
         IntegrationServiceResponse::create([
             'integration_service_id' => $createProductService->id,
             'response_example'       => [
